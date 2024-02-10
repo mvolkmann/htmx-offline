@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>PWA Demo</title>
+
+    <meta charset="UTF-8" />
+    <!-- unsafe-inline is needed in order to use Alpine.
+         See https://alpinejs.dev/advanced/csp -->
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="
+        default-src 'self';
+        img-src 'self' https://raw.githubusercontent.com;
+        script-src 'self' 'unsafe-eval';
+        style-src 'self' 'unsafe-inline'"
+    />
+    <meta name="theme-color" content="#ff0000" />
+    <!-- Adding maximum-scale=1.0, user-scalable="no"
+         prevents double-taps from zooming,
+         but it results in a poor Lighthouse accessibility score. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="styles.css" />
+
+    <script defer src="alpine.min.js"></script>
+    <script defer src="htmx.min.js"></script>
+    <script defer src="setup.js"></script>
+  </head>
+  <body x-data="{ networkStatus: 'online'}">
+    <h1>htmx Offline</h1>
+    <div
+      x-on:online.window="networkStatus = 'online'"
+      x-on:offline.window="networkStatus = 'offline'"
+    >
+      Network status:
+      <span x-text="networkStatus"></span>
+    </div>
+
+    <section>
+      <form
+        hx-on:htmx:after-request="this.reset()"
+        hx-post="/dog"
+        hx-target="#dog-table-body"
+        hx-swap="beforeend"
+      >
+        <div>
+          <label for="name">Name</label>
+          <input id="name" name="name" required type="text" />
+        </div>
+        <div>
+          <label for="breed">Breed</label>
+          <input id="breed" name="breed" required type="text" />
+        </div>
+        <button>Submit</button>
+      </form>
+
+      <div>
+        <button hx-put="/dog" hx-target="#dog-table-body">Update Snoopy</button>
+      </div>
+
+      <h2>Dogs</h2>
+      <!-- When GET /dog is requested on the initial load of the PWA,
+           the service worker is not used and we get a 404. -->
+      <table hx-get="/dog" hx-target="#dog-table-body" hx-trigger="load">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Breed</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="dog-table-body"></tbody>
+      </table>
+    </section>
+  </body>
+</html>

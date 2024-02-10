@@ -1,0 +1,86 @@
+body {
+  background-color: cornflowerblue;
+  font-family: sans-serif;
+}
+
+button {
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1.5rem;
+  padding: 0.5rem;
+}
+
+.counter {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 2rem;
+}
+
+form {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  background-color: lightyellow;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  margin-top: 1rem;
+  padding: 0.5rem;
+
+  & button {
+    background-color: orange;
+  }
+}
+
+input {
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+}
+
+h1 {
+  color: orange;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+
+.htmx-indicator {
+  height: 1.5rem;
+  margin-top: 0.5rem;
+  width: 1.5rem;
+}
+
+label {
+  font-weight: bold;
+}
+
+#reload {
+  background-color: transparent;
+  font-size: 3rem;
+}
+
+section {
+  margin-bottom: 1rem;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+td {
+  background-color: white;
+
+  & button {
+    background-color: transparent;
+  }
+}
+
+th {
+  background-color: orange;
+}
+
+td,
+th {
+  border: 1px solid black;
+  padding: 0.5rem;
+}

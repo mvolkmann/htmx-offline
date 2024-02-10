@@ -1,0 +1,19 @@
+{
+  "name": "htmx-offline",
+  "type": "module",
+  "scripts": {
+    "check": "tsc",
+    "dev": "bun run --watch src/server.tsx",
+    "format": "prettier --write '**/*.{css,html,js,ts,tsx}'",
+    "reinstall": "rm -rf node_modules bun.lockb && bun install",
+    "test": "bun --watch test"
+  },
+  "dependencies": {
+    "hono": "^3.12.7",
+    "tiny-request-router": "^1.2.2"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.0.0",
+    "typescript": "^5.3.3"
+  }
+}
