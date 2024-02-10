@@ -21,16 +21,26 @@ function dogToTableRow(dog) {
     td(id),
     td(name),
     td(breed),
-    td(
+    td([
       button(
         {
           'hx-confirm': 'Are you sure?',
           'hx-delete': `/dog/${id}`,
           'hx-target': '#dog-table-body'
         },
-        '🗑'
+        '✕'
+      ),
+      // This selects the dog which triggers a selection-change event
+      // which causes the form to update.
+      button(
+        {
+          'hx-get': '/select/' + dog.id,
+          'hx-swap': 'none',
+          type: 'button'
+        },
+        '✎'
       )
-    )
+    ])
   ]);
 }
 
@@ -187,7 +197,7 @@ export default class DogController {
     });
   }
 
-  async updateSnoopy() {
+  async updateDog(dog) {
     const ie = this.idbEasy;
     await ie.updateRecordsByIndex('dogs', 'name-index', 'Snoopy', 'Woodstock');
     return this.getDogs();
