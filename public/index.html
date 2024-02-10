@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>PWA Demo</title>
+    <title>htmx Offline</title>
 
     <meta charset="UTF-8" />
     <!-- unsafe-inline is needed in order to use Alpine.
@@ -23,19 +23,11 @@
     <link rel="manifest" href="manifest.json" />
     <link rel="stylesheet" href="styles.css" />
 
-    <script defer src="alpine.min.js"></script>
     <script defer src="htmx.min.js"></script>
     <script defer src="setup.js"></script>
   </head>
-  <body x-data="{ networkStatus: 'online'}">
+  <body>
     <h1>htmx Offline</h1>
-    <div
-      x-on:online.window="networkStatus = 'online'"
-      x-on:offline.window="networkStatus = 'offline'"
-    >
-      Network status:
-      <span x-text="networkStatus"></span>
-    </div>
 
     <section>
       <form

@@ -57,7 +57,6 @@ export default class DogController {
     try {
       // Determine if the store is empty.
       const count = await ie.getRecordCount(storeName, txn);
-      console.log('dog-controller.js initialize: count =', count);
       if (count > 0) return;
 
       await ie.createRecord(storeName, {name: 'Comet', breed: 'Whippet'}, txn);

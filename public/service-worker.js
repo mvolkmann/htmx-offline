@@ -8,10 +8,6 @@ const cacheName = 'pwa-demo-v1';
 const dbName = 'myDB';
 const version = 1;
 
-// This value was copied from the .env file.
-const publicKey =
-  'BLqlJ1001ZxraUEtFPKGDJTBm8Cmk6i44-mtv8i2p8ReAU8orbyC90zdjeJL-hCRooyPRcQoKBquc4sQ1uIlh0E';
-
 // We aren't currently caching .css files and certain .js files
 // because we want changes to be reflected without clearing the cache.
 const fileExtensionsToCache = ['jpg', 'js', 'json', 'png', 'webp'];
@@ -32,67 +28,6 @@ let dogRouter;
 setDogRouter();
 
 //-----------------------------------------------------------------------------
-
-/**
- * This converts a base64 string to a Uint8Array.
- * @param {string} base64String
- * @returns a Uint8Array
- */
-function base64StringToUint8Array(base64String) {
-  // Add equal signs to the end so the length is a multiple of 4.
-  // See https://base64.guru/learn/base64-characters.
-  //
-  // The following site says "The base64 Decode converter does not support
-  // dash("-") and underscore("_") characters, therefore it is necessary to
-  // replace those characters before doing the Base64 decoding.
-  // Use "+" instead of "-" and "/" instead of "_"."
-  // https://docshield.kofax.com/RPA/en_US/10.6.0_p2wddr4n2j/help/kap_help/reference/c_basedecode.html
-  const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding)
-    .replace(/\-/g, '+')
-    .replace(/_/g, '/');
-
-  const binary = atob(base64);
-  const outputArray = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; ++i) {
-    outputArray[i] = binary.charCodeAt(i);
-  }
-  return outputArray;
-}
-
-/**
- * This deletes all the keys from a given cache.
- * It is not currently used.
- * @param {string} cacheName
- * @returns {Promise<void>}
- */
-async function deleteCache(cacheName) {
-  // @type {string[]}
-  const keys = await caches.keys();
-  await Promise.all(
-    keys.map(key => (key === cacheName ? null : caches.delete(key)))
-  );
-}
-
-/**
- * This gets the body of a request as text.
- * It is not currently used.
- * @param {Request} request
- * @returns {Promise<string>} the body text
- */
-async function getBodyText(request) {
-  const {body} = request;
-  if (!body) return '';
-  const reader = body.getReader();
-  let result = '';
-  while (true) {
-    const {done, value} = await reader.read();
-    const text = new TextDecoder().decode(value);
-    result += text;
-    if (done) break;
-  }
-  return result;
-}
 
 /**
  * This attempts to get a resource from the cache.
@@ -136,16 +71,6 @@ async function getResource(request) {
 }
 
 /**
- * This determines if the current browser is Safari.
- * @returns {boolean} true if Safari; false otherwise
- */
-function inSafari() {
-  const {userAgent} = navigator;
-  if (!userAgent.includes('Safari')) return false;
-  return !userAgent.includes('Chrome');
-}
-
-/**
  * This sets the dogRouter variable to a Router
  * that is used to handle API requests for dogs.
  * I tried for a couple of hours to simplify this code
@@ -178,37 +103,6 @@ function shouldCache(pathname) {
   return fileExtensionsToCache.includes(extension);
 }
 
-async function subscribeToPushNotifications() {
-  if (inSafari()) {
-    console.log(
-      'service-worker.js: Safari uses a non-standard push notification API that this app does not support.'
-    );
-    return;
-  }
-
-  try {
-    // This fails if the user has not already granted
-    // permission to receive push notifications, so only
-    // call this function after they grant permission.
-    // WARNING: If the "Update on reload" checkbox in the Chrome DevTools
-    // Application tab is checked, the following line will not work.
-    const subscription = await registration.pushManager.subscribe({
-      applicationServerKey: base64StringToUint8Array(publicKey),
-      userVisibleOnly: true // false allows silent push notifications
-    });
-
-    // Save the subscription on the server so it can
-    // send push notifications to this service worker.
-    await fetch('/save-subscription', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(subscription)
-    });
-  } catch (error) {
-    console.error('service-worker.js subscribeToPushNotifications:', error);
-  }
-}
-
 //-----------------------------------------------------------------------------
 
 /**
@@ -226,16 +120,6 @@ addEventListener('install', event => {
  */
 addEventListener('activate', async event => {
   console.log('service-worker.js: activating');
-
-  // We could choose to delete the current cache every time
-  // a new version of the service worker is activated.
-  // event.waitUntil(deleteCache(cacheName));
-
-  // This gets an estimate for the amount of storage available
-  // to this service worker.
-  // Safari says "The operation is not supported." for the "estimate" method.
-  // const estimate = await navigator.storage.estimate();
-  // console.log('service-worker.js: storage estimate =', estimate);
 
   try {
     // Let browser clients know that the service worker is ready.
@@ -263,43 +147,4 @@ addEventListener('fetch', async event => {
     ? match.handler(match.params, request)
     : getResource(request);
   event.respondWith(promise);
-});
-
-/**
- * This registers a listener for the "message" event of this service worker.
- */
-addEventListener('message', event => {
-  const message = event.data;
-  if (message === 'subscribe') {
-    subscribeToPushNotifications();
-  } else {
-    console.error('service-worker.js: unexpected message =', message);
-  }
-});
-
-/**
- * This registers a listener for the "push" event of this service worker.
- * One way to test this is to trigger a push from Chrome DevTools.
- * Click the "Application" tab, click "Service workers" in the left nav,
- * enter a message in the Push input, and click the "Push" button.
- * A push notification should appear.
- * Push notifications automatically disappear after about five seconds.
- */
-addEventListener('push', async event => {
-  if (Notification.permission === 'granted') {
-    let title, body, icon;
-    try {
-      // If the event data is JSON, expect it
-      // to have title, body, and icon properties.
-      const {title, body, icon} = event.data.json();
-      registration.showNotification(title, {body, icon});
-    } catch (error) {
-      // Otherwise assume the event data is text
-      // that can be used as the notification title.
-      const title = event.data.text();
-      registration.showNotification(title);
-    }
-  } else {
-    console.error('service-worker.js: push permission not granted');
-  }
 });
