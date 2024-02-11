@@ -198,6 +198,24 @@ export default class DogController {
     return ie.deleteRecordByKey('dogs', id);
   }
 
+  /**
+   * This gets the Dog with a given id.
+   * @param {number} id
+   * @returns {Promise<Response>}
+   */
+  async getDog(id) {
+    const ie = this.idbEasy;
+    const dog = await ie.getlRecordByKey(id);
+    const html = dogToTableRow(dog);
+    return new Response(html, {
+      headers: {'Content-Type': 'application/html'}
+    });
+  }
+
+  /**
+   * This gets all the Dogs.
+   * @returns {Promise<Response>}
+   */
   async getDogs() {
     const ie = this.idbEasy;
     const dogs = await ie.getAllRecords('dogs');

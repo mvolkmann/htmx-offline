@@ -1,9 +1,11 @@
 // This file defines the API routes that the service worker will handle.
 // These are not implemented by a real HTTP server.
 import DogController from './dog-controller.js';
-import {Params, Router} from './tiny-request-router.mjs';
+import {button, div, form, input, label} from './js2html.js';
+// import {Params, Router} from './tiny-request-router.mjs';
+import {Router} from './tiny-request-router.mjs';
 
-let selectedId = '';
+let selectedId = 0;
 
 /**
  * @typedef {import('./dog-controller.js').Dog} Dog
@@ -12,7 +14,7 @@ let selectedId = '';
 /**
  * This creates a Router for dog API endpoints.
  * @param {DogController} dogController
- * @returns {Router}
+ * @returns {typeof Router}
  */
 export function getRouter(dogController) {
   const router = new Router();
@@ -22,26 +24,64 @@ export function getRouter(dogController) {
    * It is defined as a named function
    * so types can be defined with JSDoc.
    * @param {Params} params
-   * @param {Request} request
    * @returns {Promise<Response>}
    */
-  async function deleteHandler({params}) {
+  router.delete('/dog/:id', ({ params }) => {
     const id = params.get('id');
     await dogController.deleteDog(id);
     return new Response('');
-  }
-  router.delete('/dog/:id', deleteHandler);
+  });
 
   /**
    * Deselects the currently selected dog.
    */
   router.get('/deselect', () => {
-    selectedId = '';
+    selectedId = 0;
     return new Response('', {headers: {'HX-Trigger': 'selection-change'}});
   });
 
+  router.get('/form', () => {
+    const selectedDog = dogController.getDog(selectedId);
+
+    /** @type {[key: string]: string} */
+    const attrs = {
+      'hx-on:htmx:after-request': 'this.reset()'
+    };
+
+    if (selectedId) {
+      // Update an existing row.
+      attrs['hx-put'] = '/dog/' + selectedId;
+    } else {
+      // Add a new row.
+      attrs['hx-post'] = '/dog';
+      attrs['hx-target'] = 'tbody';
+      attrs['hx-swap'] = 'afterbegin';
+    }
+
+    const buttons = [
+      button({ id: 'submit-btn' }, selectedId ? 'Update' : 'Add'),
+    ];
+    if (selectedId) {
+      buttons.push(
+        button({ 'hx-get': '/deselect', 'hx-swap': 'none', type: 'button' }, 'Cancel')
+      );
+    }
+
+    return form({ 'hx-disabled-elt': '#submit-btn', ...attrs }, [
+      div([
+        label({ for: 'name' }, 'Name'),
+        input({ id: 'name', name: 'name', required: true, size: 30, type: 'text', value: selectedDog?.name ?? '' }),
+      ]),
+      div([
+        label({ for: 'breed' }, 'Breed'),
+        input({ id: 'breed', name: 'breed', required: true, size: 30, type: 'text', value: selectedDog?.breed ?? '' }),
+      ]),
+      div({ class: 'buttons' }, buttons)
+    ]);
+  });
+
   // This gets table rows for all the dogs.
-  router.get('/dog', async () => dogController.getDogs());
+  router.get('/rows', async () => dogController.getDogs());
 
   /**
    * This handles creating a new dog.
@@ -51,13 +91,12 @@ export function getRouter(dogController) {
    * @param {Request} request
    * @returns {Promise<Response>}
    */
-  async function postHandler(params, request) {
+  router.post('/dog', (params, request) => {
     const formData = await request.formData();
     /** @type Dog */
     const dog = Object.fromEntries(formData);
     return dogController.addDog(dog);
-  }
-  router.post('/dog', postHandler);
+  });
 
   /**
    * This handles updating an existing dog.
@@ -67,14 +106,13 @@ export function getRouter(dogController) {
    * @param {Request} request
    * @returns {Promise<Response>}
    */
-  async function putHandler(params, request) {
+  // This handles renaming all dogs with the name "Snoopy" to "Woodstock".
+  router.put('/dog', async (params, request) => {
     const formData = await request.formData();
     /** @type Dog */
     const dog = Object.fromEntries(formData);
     return dogController.updateDog(dog);
   }
-  // This handles renaming all dogs with the name "Snoopy" to "Woodstock".
-  router.put('/dog', async () => putHandler);
 
   return router;
 }

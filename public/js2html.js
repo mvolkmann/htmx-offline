@@ -85,7 +85,7 @@ export const a = (attrs, children) => el('a', attrs, children);
 // @ts-ignore
 export const body = (attrs, children) => el('body', attrs, children);
 // @ts-ignore
-export const br = (attrs, children) => elc('br', attrs);
+export const br = attrs => elc('br', attrs);
 // @ts-ignore
 export const button = (attrs, children) => el('button', attrs, children);
 // @ts-ignore
@@ -95,11 +95,15 @@ export const form = (attrs, children) => el('form', attrs, children);
 // @ts-ignore
 export const head = (attrs, children) => el('head', attrs, children);
 // @ts-ignore
-export const hr = (attrs, children) => elc('hr', attrs);
+export const hr = attrs => elc('hr', attrs);
 // @ts-ignore
 export const html = (attrs, children) => el('html', attrs, children);
 // @ts-ignore
-export const img = (attrs, children) => elc('img', attrs);
+export const img = attrs => elc('img', attrs);
+// @ts-ignore
+export const input = attrs => elc('img', attrs);
+// @ts-ignore
+export const label = (attrs, children) => el('label', attrs, children);
 // @ts-ignore
 export const li = (attrs, children) => el('li', attrs, children);
 // @ts-ignore
