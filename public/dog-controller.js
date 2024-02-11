@@ -29,7 +29,7 @@ function dogToTableRow(dog, updating = false) {
   return tr(attrs, [
     td(name),
     td(breed),
-    td([
+    td({class: 'buttons'}, [
       button(
         {
           class: 'show-on-hover',

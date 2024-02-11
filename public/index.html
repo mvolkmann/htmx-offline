@@ -29,23 +29,18 @@
   <body>
     <h1>Dogs</h1>
 
-    <section>
-      <div
-        hx-trigger="revealed, selection-change from:body"
-        hx-get="/form"
-      ></div>
+    <div hx-trigger="revealed, selection-change from:body" hx-get="/form"></div>
 
-      <!-- When GET /dog is requested on the initial load of the PWA,
+    <!-- When GET /dog is requested on the initial load of the PWA,
            the service worker is not available yet and we get a 404. -->
-      <table hx-get="/rows" hx-target="tbody" hx-trigger="revealed">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Breed</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </section>
+    <table hx-get="/rows" hx-target="tbody" hx-trigger="revealed">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Breed</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </body>
 </html>

@@ -101,7 +101,7 @@ export const html = (attrs, children) => el('html', attrs, children);
 // @ts-ignore
 export const img = attrs => elc('img', attrs);
 // @ts-ignore
-export const input = attrs => elc('img', attrs);
+export const input = attrs => elc('input', attrs);
 // @ts-ignore
 export const label = (attrs, children) => el('label', attrs, children);
 // @ts-ignore

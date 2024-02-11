@@ -8,15 +8,13 @@ button {
   border: none;
   border-radius: 0.5rem;
   padding: 0.5rem;
+
+  &:disabled {
+    background-color: gray;
+  }
 }
 
-.counter {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  font-size: 2rem;
-}
-
+/*
 form {
   display: inline-flex;
   flex-direction: column;
@@ -32,11 +30,10 @@ form {
     background-color: orange;
   }
 }
+*/
 
 h1 {
   color: orange;
-  margin-bottom: 0;
-  margin-top: 0;
 }
 
 .htmx-indicator {
@@ -46,26 +43,23 @@ h1 {
 }
 
 input {
+  background-color: white;
+  border: none;
   border-radius: 0.5rem;
+  margin-bottom: 1rem;
   padding: 0.5rem;
 }
 
 label {
+  display: inline-block;
   font-weight: bold;
-}
-
-#reload {
-  background-color: transparent;
-  font-size: 3rem;
-}
-
-section {
-  margin-bottom: 1rem;
+  margin-right: 0.5rem;
+  text-align: right;
+  width: 3rem;
 }
 
 .show-on-hover {
-  color: white;
-  transform: scale(2.5) translate(0, 0.2rem);
+  transform: scale(2.5) translate(0.2rem, 0.2rem);
   visibility: hidden;
 }
 
@@ -78,20 +72,25 @@ table {
   margin-top: 1rem;
 }
 
+td,
+th {
+  border: 1px solid cornflowerblue;
+  padding: 0.5rem;
+}
+
 td {
   background-color: white;
 
   & button {
     background-color: transparent;
+    color: white;
   }
+}
+
+td.buttons {
+  background-color: transparent;
 }
 
 th {
   background-color: orange;
-}
-
-td,
-th {
-  border: 1px solid black;
-  padding: 0.5rem;
 }

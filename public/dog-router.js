@@ -71,7 +71,7 @@ export function getRouter(dogController) {
       );
     }
 
-    return form({'hx-disabled-elt': '#submit-btn', ...attrs}, [
+    const html = form({'hx-disabled-elt': '#submit-btn', ...attrs}, [
       div([
         label({for: 'name'}, 'Name'),
         input({
@@ -96,6 +96,10 @@ export function getRouter(dogController) {
       ]),
       div({class: 'buttons'}, buttons)
     ]);
+
+    return new Response(html, {
+      headers: {'Content-Type': 'application/html'}
+    });
   });
 
   // This gets table rows for all the dogs.
