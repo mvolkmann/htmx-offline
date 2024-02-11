@@ -227,7 +227,10 @@ export default class DogController {
   async getDogs() {
     const ie = this.idbEasy;
     const dogs = await ie.getAllRecords('dogs');
-    const html = dogs.map(dogToTableRow).join('');
+    const sortedDogs = Array.from(dogs.values()).sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+    const html = sortedDogs.map(dog => dogToTableRow(dog)).join('');
     return new Response(html, {
       headers: {'Content-Type': 'application/html'}
     });
