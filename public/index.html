@@ -30,39 +30,21 @@
     <h1>Dogs</h1>
 
     <section>
-      <form
-        hx-on:htmx:after-request="this.reset()"
-        hx-post="/dog"
-        hx-target="#dog-table-body"
-        hx-swap="beforeend"
-      >
-        <div>
-          <label for="name">Name</label>
-          <input id="name" name="name" required type="text" />
-        </div>
-        <div>
-          <label for="breed">Breed</label>
-          <input id="breed" name="breed" required type="text" />
-        </div>
-        <button>Submit</button>
-      </form>
-
-      <div>
-        <button hx-put="/dog" hx-target="#dog-table-body">Update Snoopy</button>
-      </div>
+      <div
+        hx-trigger="revealed, selection-change from:body"
+        hx-get="/form"
+      ></div>
 
       <!-- When GET /dog is requested on the initial load of the PWA,
            the service worker is not available yet and we get a 404. -->
-      <table hx-get="/dog" hx-target="#dog-table-body" hx-trigger="load">
+      <table hx-get="/rows" hx-target="tbody" hx-trigger="revealed">
         <thead>
           <tr>
-            <th>ID</th>
             <th>Name</th>
             <th>Breed</th>
-            <th></th>
           </tr>
         </thead>
-        <tbody id="dog-table-body"></tbody>
+        <tbody></tbody>
       </table>
     </section>
   </body>

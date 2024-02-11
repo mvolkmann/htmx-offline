@@ -13,19 +13,20 @@ const storeName = 'dogs';
 /**
  * Converts a Dog object to an HTML string.
  * @param {Dog} dog
+ * @param {boolean} updating
  * @returns
  */
 function dogToTableRow(dog, updating = false) {
   const {breed, id, name} = dog;
 
-  const attrs: {[key: string]: string} = {
+  /** @type {{[key: string]: string}} */
+  const attrs = {
     class: 'on-hover',
     id: `row-${id}`
   };
   if (updating) attrs['hx-swap-oob'] = 'true';
 
   return tr(attrs, [
-    td(id),
     td(name),
     td(breed),
     td([

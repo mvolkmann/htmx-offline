@@ -1,3 +1,6 @@
+// Remove disabling of TypeScript type checking after the code is working.
+// @ts-nocheck
+
 // This file defines the API routes that the service worker will handle.
 // These are not implemented by a real HTTP server.
 import DogController from './dog-controller.js';
@@ -26,7 +29,7 @@ export function getRouter(dogController) {
    * @param {Params} params
    * @returns {Promise<Response>}
    */
-  router.delete('/dog/:id', ({ params }) => {
+  router.delete('/dog/:id', async ({params}) => {
     const id = params.get('id');
     await dogController.deleteDog(id);
     return new Response('');
@@ -58,25 +61,40 @@ export function getRouter(dogController) {
       attrs['hx-swap'] = 'afterbegin';
     }
 
-    const buttons = [
-      button({ id: 'submit-btn' }, selectedId ? 'Update' : 'Add'),
-    ];
+    const buttons = [button({id: 'submit-btn'}, selectedId ? 'Update' : 'Add')];
     if (selectedId) {
       buttons.push(
-        button({ 'hx-get': '/deselect', 'hx-swap': 'none', type: 'button' }, 'Cancel')
+        button(
+          {'hx-get': '/deselect', 'hx-swap': 'none', type: 'button'},
+          'Cancel'
+        )
       );
     }
 
-    return form({ 'hx-disabled-elt': '#submit-btn', ...attrs }, [
+    return form({'hx-disabled-elt': '#submit-btn', ...attrs}, [
       div([
-        label({ for: 'name' }, 'Name'),
-        input({ id: 'name', name: 'name', required: true, size: 30, type: 'text', value: selectedDog?.name ?? '' }),
+        label({for: 'name'}, 'Name'),
+        input({
+          id: 'name',
+          name: 'name',
+          required: true,
+          size: 30,
+          type: 'text',
+          value: selectedDog?.name ?? ''
+        })
       ]),
       div([
-        label({ for: 'breed' }, 'Breed'),
-        input({ id: 'breed', name: 'breed', required: true, size: 30, type: 'text', value: selectedDog?.breed ?? '' }),
+        label({for: 'breed'}, 'Breed'),
+        input({
+          id: 'breed',
+          name: 'breed',
+          required: true,
+          size: 30,
+          type: 'text',
+          value: selectedDog?.breed ?? ''
+        })
       ]),
-      div({ class: 'buttons' }, buttons)
+      div({class: 'buttons'}, buttons)
     ]);
   });
 
@@ -91,7 +109,7 @@ export function getRouter(dogController) {
    * @param {Request} request
    * @returns {Promise<Response>}
    */
-  router.post('/dog', (params, request) => {
+  router.post('/dog', async (params, request) => {
     const formData = await request.formData();
     /** @type Dog */
     const dog = Object.fromEntries(formData);
@@ -112,7 +130,7 @@ export function getRouter(dogController) {
     /** @type Dog */
     const dog = Object.fromEntries(formData);
     return dogController.updateDog(dog);
-  }
+  });
 
   return router;
 }

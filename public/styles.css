@@ -4,9 +4,9 @@ body {
 }
 
 button {
+  background-color: lightgreen;
   border: none;
   border-radius: 0.5rem;
-  font-size: 1.5rem;
   padding: 0.5rem;
 }
 
@@ -33,11 +33,6 @@ form {
   }
 }
 
-input {
-  border-radius: 0.5rem;
-  padding: 0.5rem;
-}
-
 h1 {
   color: orange;
   margin-bottom: 0;
@@ -48,6 +43,11 @@ h1 {
   height: 1.5rem;
   margin-top: 0.5rem;
   width: 1.5rem;
+}
+
+input {
+  border-radius: 0.5rem;
+  padding: 0.5rem;
 }
 
 label {
@@ -61,6 +61,16 @@ label {
 
 section {
   margin-bottom: 1rem;
+}
+
+.show-on-hover {
+  color: white;
+  transform: scale(2.5) translate(0, 0.2rem);
+  visibility: hidden;
+}
+
+.on-hover:hover .show-on-hover {
+  visibility: visible;
 }
 
 table {
