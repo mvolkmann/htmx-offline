@@ -206,11 +206,18 @@ export default class DogController {
    */
   async getDog(id) {
     const ie = this.idbEasy;
-    const dog = await ie.getlRecordByKey(id);
-    const html = dogToTableRow(dog);
-    return new Response(html, {
-      headers: {'Content-Type': 'application/html'}
-    });
+    const dog = await ie.getRecordByKey('dogs', id);
+    if (dog) {
+      const html = dogToTableRow(dog);
+      return new Response(html, {
+        headers: {'Content-Type': 'application/html'}
+      });
+    } else {
+      return new Response('', {
+        headers: {'Content-Type': 'application/html'},
+        status: 404
+      });
+    }
   }
 
   /**
