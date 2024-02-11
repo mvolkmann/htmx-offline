@@ -15,18 +15,28 @@ const storeName = 'dogs';
  * @param {Dog} dog
  * @returns
  */
-function dogToTableRow(dog) {
+function dogToTableRow(dog, updating = false) {
   const {breed, id, name} = dog;
-  return tr([
+
+  const attrs: {[key: string]: string} = {
+    class: 'on-hover',
+    id: `row-${id}`
+  };
+  if (updating) attrs['hx-swap-oob'] = 'true';
+
+  return tr(attrs, [
     td(id),
     td(name),
     td(breed),
     td([
       button(
         {
+          class: 'show-on-hover',
           'hx-confirm': 'Are you sure?',
           'hx-delete': `/dog/${id}`,
-          'hx-target': '#dog-table-body'
+          'hx-target': 'closest tr',
+          'hx-swap': 'outerHTML',
+          type: 'button'
         },
         '✕'
       ),
@@ -34,6 +44,7 @@ function dogToTableRow(dog) {
       // which causes the form to update.
       button(
         {
+          class: 'show-on-hover',
           'hx-get': '/select/' + dog.id,
           'hx-swap': 'none',
           type: 'button'
@@ -180,12 +191,11 @@ export default class DogController {
   /**
    * Deletes a Dog from the database.
    * @param {number} id
-   * @returns {Promise<Response>} HTML for table rows for all remaining dogs.
+   * @return {Promise<void>}
    */
   async deleteDog(id) {
     const ie = this.idbEasy;
-    await ie.deleteRecordByKey('dogs', id);
-    return this.getDogs();
+    return ie.deleteRecordByKey('dogs', id);
   }
 
   async getDogs() {
@@ -197,9 +207,14 @@ export default class DogController {
     });
   }
 
+  /**
+   * Updates an existing Dog in the database.
+   * @param {Dog} dog
+   * @returns {Promise<Dog>}
+   */
   async updateDog(dog) {
     const ie = this.idbEasy;
     await ie.updateRecordsByIndex('dogs', 'name-index', 'Snoopy', 'Woodstock');
-    return this.getDogs();
+    return dog;
   }
 }
