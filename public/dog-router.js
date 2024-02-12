@@ -17,38 +17,6 @@ const version = 1;
 let idbEasy;
 let selectedId = 0;
 
-/**
- * This sets the idbEasy variable that is used to
- * simplify interacting with an IndexedDB database.
- * I tried for a couple of hours to simplify this code
- * and couldn't arrive at an alternative that works.
- */
-function setupDB() {
-  const promise = IDBEasy.openDB(dbName, version, (db, event) => {
-    // const {newVersion, oldVersion} = event;
-
-    idbEasy = new IDBEasy(db);
-
-    // If the "dogs" store already exists, delete it.
-    const txn = event.target?.transaction;
-    if (txn) {
-      const names = Array.from(txn.objectStoreNames);
-      if (names.includes(storeName)) idbEasy.deleteStore(storeName);
-    }
-
-    // Create the "dogs" store and its indexes.
-    const store = idbEasy.createStore(storeName, 'id', true);
-    idbEasy.createIndex(store, 'breed-index', 'breed');
-    idbEasy.createIndex(store, 'name-index', 'name');
-
-    initializeDB(txn);
-  });
-
-  // Top-level await is not allowed in service workers.
-  promise.then(upgradedDB => {
-    idbEasy = new IDBEasy(upgradedDB);
-  });
-}
 setupDB();
 
 /**
@@ -155,32 +123,56 @@ async function initializeDB(txn) {
 }
 
 /**
- * @typedef {import('./dog-controller.js').Dog} Dog
+ * This sets the idbEasy variable that is used to
+ * simplify interacting with an IndexedDB database.
+ * I tried for a couple of hours to simplify this code
+ * and couldn't arrive at an alternative that works.
  */
+function setupDB() {
+  const promise = IDBEasy.openDB(dbName, version, (db, event) => {
+    // const {newVersion, oldVersion} = event;
+
+    idbEasy = new IDBEasy(db);
+
+    // If the "dogs" store already exists, delete it.
+    const txn = event.target?.transaction;
+    if (txn) {
+      const names = Array.from(txn.objectStoreNames);
+      if (names.includes(storeName)) idbEasy.deleteStore(storeName);
+    }
+
+    // Create the "dogs" store and its indexes.
+    const store = idbEasy.createStore(storeName, 'id', true);
+    idbEasy.createIndex(store, 'breed-index', 'breed');
+    idbEasy.createIndex(store, 'name-index', 'name');
+
+    initializeDB(txn);
+  });
+
+  // Top-level await is not allowed in service workers.
+  promise.then(upgradedDB => {
+    idbEasy = new IDBEasy(upgradedDB);
+  });
+}
+
+//-----------------------------------------------------------------------------
 
 const router = new Router();
 
-/**
- * This deletes the dog with a given id.
- * It is defined as a named function
- * so types can be defined with JSDoc.
- * @param {Params} params
- * @returns {Promise<Response>}
- */
+// This deletes the dog with a given id.
 router.delete('/dog/:id', async params => {
   const id = Number(params['id']);
   await idbEasy.deleteRecordByKey('dogs', id);
   return new Response('');
 });
 
-/**
- * Deselects the currently selected dog.
- */
+// This deselects the currently selected dog.
 router.get('/deselect', () => {
   selectedId = 0;
   return new Response('', {headers: {'HX-Trigger': 'selection-change'}});
 });
 
+// This gets an HTML form that is used to add and update dogs.
 router.get('/form', async () => {
   const selectedDog = await idbEasy.getRecordByKey('dogs', selectedId);
 
@@ -252,23 +244,13 @@ router.get('/rows', async () => {
   });
 });
 
-/**
- * This selects a dog.
- * @param {Params} params
- */
+// This selects a dog with a given id.
 router.get('/select/:id', params => {
   selectedId = Number(params['id']);
   return new Response('', {headers: {'HX-Trigger': 'selection-change'}});
 });
 
-/**
- * This handles creating a new dog.
- * It is defined as a named function
- * so types can be defined with JSDoc.
- * @param {Params} params
- * @param {Request} request
- * @returns {Promise<Response>}
- */
+// This creates a new dog.
 router.post('/dog', async (params, request) => {
   const formData = await request.formData();
   /** @type Dog */
@@ -280,15 +262,7 @@ router.post('/dog', async (params, request) => {
   });
 });
 
-/**
- * This handles updating an existing dog.
- * It is defined as a named function
- * so types can be defined with JSDoc.
- * @param {Params} params
- * @param {Request} request
- * @returns {Promise<Response>}
- */
-// This handles renaming all dogs with the name "Snoopy" to "Woodstock".
+// This updates an existing dog.
 router.put('/dog/:id', async (params, request) => {
   const formData = await request.formData();
   /** @type Dog */
@@ -307,6 +281,7 @@ router.put('/dog/:id', async (params, request) => {
   });
 });
 
+// This function is in the "fetch" handler in service-worker.js.
 export function getRouteMatch(method, pathname) {
   return router.match(method, pathname);
 }
