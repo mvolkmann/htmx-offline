@@ -39,11 +39,11 @@ export default class IDBEasy {
    * @returns {Promise<void>}
    */
   clearStore(storeName, txn) {
-    const suppliedTxn = Boolean(txn);
-    if (!suppliedTxn) txn = this.db.transaction(storeName, 'readwrite');
-    const store = txn.objectStore(storeName);
+    // TODO: Apply this same approach all over!
+    const definiteTxn = this.ensureTxn(txn, storeName, 'readwrite');
+    const store = definiteTxn.objectStore(storeName);
     const request = store.clear();
-    return requestToPromise(request, 'clear store', suppliedTxn);
+    return requestToPromise(request, 'clear store', Boolean(txn));
   }
 
   /**
@@ -156,6 +156,17 @@ export default class IDBEasy {
    */
   deleteStore(storeName) {
     this.db.deleteObjectStore(storeName);
+  }
+
+  /**
+   * @param {IDBTransaction | undefined} txn
+   * @param {string} storeName
+   * @param {IDBTransactionMode} mode
+   * @returns {IDBTransaction}
+   */
+  ensureTxn(txn, storeName, mode) {
+    if (!txn) txn = this.db.transaction(storeName, mode);
+    return /** @type {IDBTransaction} */ (txn);
   }
 
   /**
