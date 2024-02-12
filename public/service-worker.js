@@ -7,15 +7,6 @@ const cacheName = 'pwa-demo-v1';
 const fileExtensionsToCache = ['jpg', 'js', 'json', 'png', 'webp'];
 
 /**
- * @typedef {object} RouterMatch
- * @property {string} method;
- * @property {string} path;
- * @property {() => Response} handler;
- */
-
-//-----------------------------------------------------------------------------
-
-/**
  * This attempts to get a resource from the cache.
  * If it is not found in the cache, it is retrieved from the network.
  * If it is a kind of resource we want to cache, it is added to the cache.
@@ -63,14 +54,12 @@ async function getResource(request) {
  * @returns {boolean} true to cache; false otherwise
  */
 function shouldCache(pathname) {
-  if (pathname.endsWith('setup.js')) return false;
   if (pathname.endsWith('service-worker.js')) return false;
+  if (pathname.endsWith('setup.js')) return false;
   const index = pathname.lastIndexOf('.');
   const extension = index === -1 ? '' : pathname.substring(index + 1);
   return fileExtensionsToCache.includes(extension);
 }
-
-//-----------------------------------------------------------------------------
 
 /**
  * This registers a listener for the "install" event of this service worker.
