@@ -100,8 +100,10 @@ async function initializeDB(txn) {
 
     // This code is only here to provide an example of
     // updating an existing record using the upsertRecord method.
-    /** @type {Dog[]} */
-    const dogs = await idbEasy.getAllRecords(storeName, txn);
+    const dogs = /** @type {Dog[]} */ await idbEasy.getAllRecords(
+      storeName,
+      txn
+    );
     const comet = dogs.find(dog => dog.name === 'Comet');
     if (comet) {
       comet.name = 'Fireball';
@@ -200,8 +202,11 @@ router.get('/deselect', () => {
 
 // This gets an HTML form that is used to add and update dogs.
 router.get('/form', async () => {
-  /** @type {Dog | undefined} */
-  const selectedDog = await idbEasy.getRecordByKey('dogs', selectedId);
+  const selectedDog =
+    /** @type {Dog | undefined} */ await idbEasy.getRecordByKey(
+      'dogs',
+      selectedId
+    );
 
   /** @type {{[key: string]: string}} */
   const attrs = {
