@@ -146,17 +146,7 @@ async function initializeDB(txn) {
  * @param {IDBVersionChangeEvent} event
  */
 function upgradeDB(event) {
-  const {newVersion, oldVersion} = event;
-  if (oldVersion === 0) {
-    console.log('creating first version of IndexedDB database');
-  } else {
-    console.log(
-      'upgrading IndexedDB database from version',
-      oldVersion,
-      'to',
-      newVersion
-    );
-  }
+  // const {newVersion, oldVersion} = event;
 
   // If the "dogs" store already exists, delete it.
   const txn = event.target?.transaction;
@@ -171,15 +161,6 @@ function upgradeDB(event) {
   idbEasy.createIndex(store, 'name-index', 'name');
 
   initializeDB(txn);
-}
-
-/**
- * This gets the Dog with a given id.
- * @param {number} id
- * @returns {Promise<Dog>}
- */
-function getDog(id) {
-  return idbEasy.getRecordByKey('dogs', id);
 }
 
 /**
@@ -210,7 +191,7 @@ router.get('/deselect', () => {
 });
 
 router.get('/form', async () => {
-  const selectedDog = await getDog(selectedId);
+  const selectedDog = await idbEasy.getRecordByKey('dogs', selectedId);
 
   /** @type {[key: string]: string} */
   const attrs = {
