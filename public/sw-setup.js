@@ -11,7 +11,7 @@ async function registerServiceWorker() {
       type: 'module'
     });
   } catch (error) {
-    console.error('setup.js registerServiceWorker:', error);
+    console.error('sw-setup.js registerServiceWorker:', error);
   }
 }
 

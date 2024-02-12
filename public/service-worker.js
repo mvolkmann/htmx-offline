@@ -55,7 +55,7 @@ async function getResource(request) {
  */
 function shouldCache(pathname) {
   if (pathname.endsWith('service-worker.js')) return false;
-  if (pathname.endsWith('setup.js')) return false;
+  if (pathname.endsWith('sw-setup.js')) return false;
   const index = pathname.lastIndexOf('.');
   const extension = index === -1 ? '' : pathname.substring(index + 1);
   return fileExtensionsToCache.includes(extension);
