@@ -177,9 +177,23 @@ function setupDB() {
  */
 
 /**
+ * @typedef {object} RouteMatch
+ * @property {RouteCallback} handler
+ * @property {StringToAny} params
+ */
+
+/**
+ * @typedef {function} RouterMatchFunction
+ * @param {string} method
+ * @param {string} pathname
+ * @returns {RouterMatch}
+ */
+
+/**
  * @typedef {object} MyRouter
  * @property {RouteHandler} delete
  * @property {RouteHandler} get
+ * @property {RouterMatchFunction} match
  * @property {RouteHandler} patch
  * @property {RouteHandler} post
  * @property {RouteHandler} put
@@ -203,11 +217,9 @@ router.get('/deselect', () => {
 
 // This gets an HTML form that is used to add and update dogs.
 router.get('/form', async () => {
-  const selectedDog =
-    /** @type {Dog | undefined} */ await idbEasy.getRecordByKey(
-      'dogs',
-      selectedId
-    );
+  const selectedDog = /** @type {Dog | undefined} */ (
+    await idbEasy.getRecordByKey('dogs', selectedId)
+  );
 
   /** @type {{[key: string]: string}} */
   const attrs = {
@@ -267,8 +279,7 @@ router.get('/form', async () => {
 
 // This gets table rows for all the dogs.
 router.get('/rows', async () => {
-  /** @type {Dog[]} */
-  const dogs = await idbEasy.getAllRecords('dogs');
+  const dogs = /** @type {Dog[]} */ (await idbEasy.getAllRecords('dogs'));
   const sortedDogs = Array.from(dogs.values()).sort((a, b) =>
     a.name.localeCompare(b.name)
   );
@@ -288,7 +299,7 @@ router.get('/select/:id', params => {
 router.post('/dog', async (params, request) => {
   const formData = await request.formData();
   /** @type {Dog} */
-  const dog = /** @type {Dog} */ Object.fromEntries(formData);
+  const dog = /** @type {Dog} */ (Object.fromEntries(formData));
   const id = await idbEasy.createRecord('dogs', dog);
   dog.id = Number(id);
   const html = dogToTableRow(dog);
@@ -300,7 +311,7 @@ router.post('/dog', async (params, request) => {
 // This updates an existing dog.
 router.put('/dog/:id', async (params, request) => {
   const formData = await request.formData();
-  const dog = /** @type {Dog} */ Object.fromEntries(formData);
+  const dog = /** @type {Dog} */ (Object.fromEntries(formData));
   dog.id = Number(params['id']);
 
   selectedId = 0;
@@ -319,7 +330,7 @@ router.put('/dog/:id', async (params, request) => {
  * This function is used by the "fetch" handler in service-worker.js.
  * @param {string} method
  * @param {string} pathname
- * @returns {Router}
+ * @returns {RouteMatch}
  */
 export function getRouteMatch(method, pathname) {
   return router.match(method, pathname);

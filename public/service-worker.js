@@ -90,6 +90,21 @@ addEventListener('activate', async event => {
 });
 
 /**
+ * @callback RouteCallback
+ * @param {StringToAny} [params]
+ * @param {Request} [request]
+ * @returns {Promise<Response>}
+ */
+
+/** @typedef {{[key: string]: any}} StringToAny */
+
+/**
+ * @typedef {object} RouteMatch
+ * @property {RouteCallback} handler
+ * @property {StringToAny} params
+ */
+
+/**
  * This registers a listener for the "fetch" event of this service worker.
  * It responds with a resource for accessing data at a requested URL.
  */
@@ -98,7 +113,9 @@ addEventListener('fetch', async event => {
   const url = new URL(request.url);
   const {pathname} = url;
 
-  const match = getRouteMatch(request.method, pathname);
+  const match = /** @type {RouteMatch} */ (
+    getRouteMatch(request.method, pathname)
+  );
   const promise = match
     ? match.handler(match.params, request)
     : getResource(request);
