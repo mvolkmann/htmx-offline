@@ -95,6 +95,8 @@ export default class IDBEasy {
     return requestToPromise(request, 'delete database');
   }
 
+  /** @typedef {{[key: string]: string}} Record */
+
   /**
    * This deletes all the records in a given store
    * that have a given value in a given index.
@@ -109,12 +111,16 @@ export default class IDBEasy {
     if (!suppliedTxn) txn = this.db.transaction(storeName, 'readwrite');
     return new Promise((resolve, reject) => {
       const store = txn.objectStore(storeName);
+      const keyPath = Array.isArray(store.keyPath)
+        ? store.keyPath[0]
+        : store.keyPath;
       const index = store.index(indexName);
       const request = index.getAll(indexValue);
       request.onsuccess = event => {
-        const records = event.target.result;
+        /** @type {Record[]} */
+        const records = event.target?.result ?? [];
         for (const record of records) {
-          store.delete(record[store.keyPath]);
+          store.delete(record[keyPath]);
         }
         if (!suppliedTxn) txn.commit();
         resolve();
@@ -132,7 +138,7 @@ export default class IDBEasy {
    * that has a given key value.
    * @param {string} storeName
    * @param {any} key
-   * @param {IDBTransaction} txn
+   * @param {IDBTransaction} [txn]
    * @returns {Promise<void>}
    */
   deleteRecordByKey(storeName, key, txn) {
@@ -170,7 +176,7 @@ export default class IDBEasy {
    * This gets the record in a given store with a given key value.
    * @param {string} storeName
    * @param {any} key
-   * @param {IDBTransaction} txn
+   * @param {IDBTransaction} [txn]
    * @returns {Promise<object>}
    */
   getRecordByKey(storeName, key, txn) {
@@ -267,7 +273,7 @@ export default class IDBEasy {
       const index = store.index(indexName);
       const request = index.getAll(oldValue);
       request.onsuccess = event => {
-        /** @type {object[]} */
+        /** @type {Record[]} */
         const records = event.target?.result ?? [];
         for (const record of records) {
           let {keyPath} = index;

@@ -1,9 +1,6 @@
 // This file defines the API routes that the service worker will handle.
 // These are not implemented by a real HTTP server.
 
-// Remove disabling of TypeScript type checking after the code is working.
-// @ts-nocheck
-
 import IDBEasy from './idb-easy.js';
 import {button, div, form, input, label, td, tr} from './js2html.js';
 // import {Params, Router} from './tiny-request-router.mjs';
@@ -14,7 +11,9 @@ const dbName = 'myDB';
 const storeName = 'dogs';
 const version = 1;
 
-let idbEasy;
+/** @type {IDBEasy} */
+let idbEasy; // set in setupDB
+
 let selectedId = 0;
 
 setupDB();
@@ -176,7 +175,7 @@ router.get('/deselect', () => {
 router.get('/form', async () => {
   const selectedDog = await idbEasy.getRecordByKey('dogs', selectedId);
 
-  /** @type {[key: string]: string} */
+  /** @type {{[key: string]: string}} */
   const attrs = {
     'hx-on:htmx:after-request': 'this.reset()'
   };
