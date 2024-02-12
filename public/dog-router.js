@@ -34,7 +34,9 @@ setupDB();
 function dogToTableRow(dog, updating = false) {
   const {breed, id, name} = dog;
 
-  /** @type {{[key: string]: string}} */
+  /** @typedef {{[key: string]: string}} StringToString */
+
+  /** @type {StringToString} */
   const attrs = {
     class: 'on-hover',
     id: `row-${id}`
@@ -156,6 +158,31 @@ function setupDB() {
 
 //-----------------------------------------------------------------------------
 
+/** @typedef {{[key: string]: any}} StringToAny */
+
+/**
+ * @callback RouteCallback
+ * @param {MyObject} [params]
+ * @param {Request} [request]
+ * @returns {Promise<Response>}
+ */
+
+/**
+ * @method RouteHandler
+ * @param {string} path
+ * @param {RouteCallback} handler
+ * @param {StringToAny} [options]
+ * @returns {void}
+ */
+
+/**
+ * @class Router
+ * @property {RouteHandler} delete
+ * @property {RouteHandler} get
+ * @property {RouteHandler} patch
+ * @property {RouteHandler} post
+ * @property {RouteHandler} put
+ */
 const router = new Router();
 
 // This deletes the dog with a given id.
@@ -252,11 +279,12 @@ router.get('/select/:id', params => {
 });
 
 // This creates a new dog.
-router.post('/dog', async (_params, request) => {
+router.post('/dog', async (params, request) => {
   const formData = await request.formData();
-  /** @type Dog */
-  const dog = Object.fromEntries(formData);
-  dog.id = await idbEasy.createRecord('dogs', dog);
+  /** @type {Dog} */
+  const dog = /** @type {Dog} */ Object.fromEntries(formData);
+  const id = await idbEasy.createRecord('dogs', dog);
+  dog.id = Number(id);
   const html = dogToTableRow(dog);
   return new Response(html, {
     headers: {'Content-Type': 'application/html'}
@@ -266,8 +294,7 @@ router.post('/dog', async (_params, request) => {
 // This updates an existing dog.
 router.put('/dog/:id', async (params, request) => {
   const formData = await request.formData();
-  /** @type Dog */
-  const dog = Object.fromEntries(formData);
+  const dog = /** @type {Dog} */ Object.fromEntries(formData);
   dog.id = Number(params['id']);
 
   selectedId = 0;
