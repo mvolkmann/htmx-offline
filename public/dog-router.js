@@ -173,6 +173,7 @@ router.get('/deselect', () => {
 
 // This gets an HTML form that is used to add and update dogs.
 router.get('/form', async () => {
+  /** @type {Dog | undefined} */
   const selectedDog = await idbEasy.getRecordByKey('dogs', selectedId);
 
   /** @type {{[key: string]: string}} */
@@ -233,6 +234,7 @@ router.get('/form', async () => {
 
 // This gets table rows for all the dogs.
 router.get('/rows', async () => {
+  /** @type {Dog[]} */
   const dogs = await idbEasy.getAllRecords('dogs');
   const sortedDogs = Array.from(dogs.values()).sort((a, b) =>
     a.name.localeCompare(b.name)
@@ -250,7 +252,7 @@ router.get('/select/:id', params => {
 });
 
 // This creates a new dog.
-router.post('/dog', async (params, request) => {
+router.post('/dog', async (_params, request) => {
   const formData = await request.formData();
   /** @type Dog */
   const dog = Object.fromEntries(formData);
@@ -280,7 +282,12 @@ router.put('/dog/:id', async (params, request) => {
   });
 });
 
-// This function is in the "fetch" handler in service-worker.js.
+/**
+ * This function is used by the "fetch" handler in service-worker.js.
+ * @param {string} method
+ * @param {string} pathname
+ * @returns {Router}
+ */
 export function getRouteMatch(method, pathname) {
   return router.match(method, pathname);
 }

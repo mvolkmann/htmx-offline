@@ -35,7 +35,7 @@ export default class IDBEasy {
   /**
    * This deletes all the records in a given store.
    * @param {string} storeName
-   * @param {IDBTransaction} txn
+   * @param {IDBTransaction} [txn]
    * @returns {Promise<void>}
    */
   clearStore(storeName, txn) {
@@ -62,7 +62,7 @@ export default class IDBEasy {
    * This creates a record in a given store.
    * @param {string} storeName
    * @param {object} object
-   * @param {IDBTransaction} txn
+   * @param {IDBTransaction} [txn]
    * @returns {Promise<number|string>} key of new record
    */
   createRecord(storeName, object, txn) {
@@ -103,7 +103,7 @@ export default class IDBEasy {
    * @param {string} storeName
    * @param {string} indexName
    * @param {any} indexValue
-   * @param {IDBTransaction} txn
+   * @param {IDBTransaction} [txn]
    * @returns {Promise<void>}
    */
   deleteRecordsByIndex(storeName, indexName, indexValue, txn) {
@@ -161,7 +161,7 @@ export default class IDBEasy {
   /**
    * This gets all the record in a given store.
    * @param {string} storeName
-   * @param {IDBTransaction} txn
+   * @param {IDBTransaction} [txn]
    * @returns {Promise<object[]>}
    */
   getAllRecords(storeName, txn) {
@@ -190,7 +190,7 @@ export default class IDBEasy {
   /**
    * This gets the number of records in a given store.
    * @param {string} storeName
-   * @param {IDBTransaction} txn
+   * @param {IDBTransaction} [txn]
    * @returns {Promise<number>}
    */
   getRecordCount(storeName, txn) {
@@ -207,7 +207,7 @@ export default class IDBEasy {
    * @param {string} storeName
    * @param {string} indexName
    * @param {any} indexValue
-   * @param {IDBTransaction} txn
+   * @param {IDBTransaction} [txn]
    * @returns {Promise<object[]>}
    */
   getRecordsByIndex(storeName, indexName, indexValue, txn) {
@@ -262,7 +262,7 @@ export default class IDBEasy {
    * @param {string} indexName
    * @param {any} oldValue
    * @param {any} newValue
-   * @param {IDBTransaction} txn
+   * @param {IDBTransaction} [txn]
    * @returns {Promise<void>}
    */
   updateRecordsByIndex(storeName, indexName, oldValue, newValue, txn) {
@@ -296,7 +296,7 @@ export default class IDBEasy {
    * This inserts or updates a record in a given store.
    * @param {string} storeName
    * @param {object} object
-   * @param {IDBTransaction} txn
+   * @param {IDBTransaction} [txn]
    * @returns {Promise<object>}
    */
   upsertRecord(storeName, object, txn) {
