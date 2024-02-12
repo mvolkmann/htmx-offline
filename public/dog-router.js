@@ -75,7 +75,7 @@ function dogToTableRow(dog, updating = false) {
 
 /**
  * This initializes the dogs store with sample data if it is currently empty.
- * @param {IDBTransaction} txn
+ * @param {IDBTransaction} [txn]
  * @returns {Promise<void>}
  */
 async function initializeDB(txn) {
@@ -136,8 +136,11 @@ function setupDB() {
 
     idbEasy = new IDBEasy(db);
 
+    console.log('dog-router.js X: event.target =', event.target);
+
     // If the "dogs" store already exists, delete it.
-    const txn = event.target?.transaction;
+    const request = /** @type {IDBOpenDBRequest} */ (event.target);
+    const txn = request.transaction;
     if (txn) {
       const names = Array.from(txn.objectStoreNames);
       if (names.includes(storeName)) idbEasy.deleteStore(storeName);
@@ -148,7 +151,7 @@ function setupDB() {
     idbEasy.createIndex(store, 'breed-index', 'breed');
     idbEasy.createIndex(store, 'name-index', 'name');
 
-    initializeDB(txn);
+    initializeDB(txn ?? undefined);
   });
 
   // Top-level await is not allowed in service workers.
