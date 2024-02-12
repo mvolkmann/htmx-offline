@@ -1,12 +1,6 @@
-/// <reference lib="webworker" />
-
-import DogController from './dog-controller.js';
-import {getRouter} from './dog-router.js';
-import IDBEasy from './idb-easy.js';
+import {getRouteMatch} from './dog-router.js';
 
 const cacheName = 'pwa-demo-v1';
-const dbName = 'myDB';
-const version = 1;
 
 // We aren't currently caching .css files and certain .js files
 // because we want changes to be reflected without clearing the cache.
@@ -18,14 +12,6 @@ const fileExtensionsToCache = ['jpg', 'js', 'json', 'png', 'webp'];
  * @property {string} path;
  * @property {() => Response} handler;
  */
-
-/**
- * This is a Router for dog API endpoints.
- * @type {{match: (method: string, pathname: string) => RouterMatch }}
- */
-let dogRouter;
-
-setDogRouter();
 
 //-----------------------------------------------------------------------------
 
@@ -68,25 +54,6 @@ async function getResource(request) {
   }
 
   return resource;
-}
-
-/**
- * This sets the dogRouter variable to a Router
- * that is used to handle API requests for dogs.
- * I tried for a couple of hours to simplify this code
- * and couldn't arrive at an alternative that works.
- */
-function setDogRouter() {
-  const promise = IDBEasy.openDB(dbName, version, (db, event) => {
-    const dogController = new DogController(new IDBEasy(db));
-    dogController.upgrade(event);
-  });
-
-  // Top-level await is not allowed in service workers.
-  promise.then(upgradedDB => {
-    const dogController = new DogController(new IDBEasy(upgradedDB));
-    dogRouter = getRouter(dogController);
-  });
 }
 
 /**
@@ -142,7 +109,7 @@ addEventListener('fetch', async event => {
   const url = new URL(request.url);
   const {pathname} = url;
 
-  const match = dogRouter.match(request.method, pathname);
+  const match = getRouteMatch(request.method, pathname);
   const promise = match
     ? match.handler(match.params, request)
     : getResource(request);

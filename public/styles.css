@@ -48,7 +48,7 @@ label {
 }
 
 .show-on-hover {
-  transform: scale(2.5) translate(0.2rem, 0.2rem);
+  transform: scale(2.5) translate(0.2rem, 0);
   visibility: hidden;
 }
 
