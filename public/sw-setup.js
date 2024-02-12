@@ -14,7 +14,7 @@ if ('serviceWorker' in navigator) {
 // Register to receive messages from the service worker.
 // These are sent with "client.postMessage" in the service worker.
 // They are not push notifications.
-navigator.serviceWorker.onmessage = event => {
+navigator.serviceWorker.addEventListener('message', event => {
   const message = event.data;
   if (message === 'ready') {
     // Determine if a service worker is already controlling this page.
@@ -29,7 +29,7 @@ navigator.serviceWorker.onmessage = event => {
       }, 100);
     }
   }
-};
+});
 
 // Including this line makes this a module,
 // which is needed to use "await" in the top-level code.
