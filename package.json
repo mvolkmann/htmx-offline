@@ -2,7 +2,7 @@
   "name": "htmx-offline",
   "type": "module",
   "scripts": {
-    "check": "tsc",
+    "check": "tsc --noEmit",
     "dev": "bun run --watch src/server.tsx",
     "format": "prettier --write '**/*.{css,html,js,ts,tsx}'",
     "reinstall": "rm -rf node_modules bun.lockb && bun install",

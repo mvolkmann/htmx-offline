@@ -100,9 +100,8 @@ async function initializeDB(txn) {
 
     // This code is only here to provide an example of
     // updating an existing record using the upsertRecord method.
-    const dogs = /** @type {Dog[]} */ await idbEasy.getAllRecords(
-      storeName,
-      txn
+    const dogs = /** @type {Dog[]} */ (
+      await idbEasy.getAllRecords(storeName, txn)
     );
     const comet = dogs.find(dog => dog.name === 'Comet');
     if (comet) {
@@ -164,13 +163,13 @@ function setupDB() {
 
 /**
  * @callback RouteCallback
- * @param {MyObject} [params]
+ * @param {StringToAny} [params]
  * @param {Request} [request]
  * @returns {Promise<Response>}
  */
 
 /**
- * @method RouteHandler
+ * @typedef {function} RouteHandler
  * @param {string} path
  * @param {RouteCallback} handler
  * @param {StringToAny} [options]
@@ -178,16 +177,18 @@ function setupDB() {
  */
 
 /**
- * @class Router
+ * @typedef {object} MyRouter
  * @property {RouteHandler} delete
  * @property {RouteHandler} get
  * @property {RouteHandler} patch
  * @property {RouteHandler} post
  * @property {RouteHandler} put
  */
-const router = new Router();
+
+const router = /** @type {MyRouter} */ (new Router());
 
 // This deletes the dog with a given id.
+/** @type {Router} */
 router.delete('/dog/:id', async params => {
   const id = Number(params['id']);
   await idbEasy.deleteRecordByKey('dogs', id);
