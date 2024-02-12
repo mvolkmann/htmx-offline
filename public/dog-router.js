@@ -23,10 +23,25 @@ let selectedId = 0;
  * I tried for a couple of hours to simplify this code
  * and couldn't arrive at an alternative that works.
  */
-function setup() {
+function setupDB() {
   const promise = IDBEasy.openDB(dbName, version, (db, event) => {
+    // const {newVersion, oldVersion} = event;
+
     idbEasy = new IDBEasy(db);
-    upgradeDB(event);
+
+    // If the "dogs" store already exists, delete it.
+    const txn = event.target?.transaction;
+    if (txn) {
+      const names = Array.from(txn.objectStoreNames);
+      if (names.includes(storeName)) idbEasy.deleteStore(storeName);
+    }
+
+    // Create the "dogs" store and its indexes.
+    const store = idbEasy.createStore(storeName, 'id', true);
+    idbEasy.createIndex(store, 'breed-index', 'breed');
+    idbEasy.createIndex(store, 'name-index', 'name');
+
+    initializeDB(txn);
   });
 
   // Top-level await is not allowed in service workers.
@@ -34,7 +49,7 @@ function setup() {
     idbEasy = new IDBEasy(upgradedDB);
   });
 }
-setup();
+setupDB();
 
 /**
  * @typedef {object} Dog
@@ -137,30 +152,6 @@ async function initializeDB(txn) {
   } catch (error) {
     console.error('dogs.js initialize: error =', error);
   }
-}
-
-/**
- * This creates the initial store and indexes in the IndexedDB database
- * or upgrades existing ones.
- * Then it calls initializeDB to add sample data.
- * @param {IDBVersionChangeEvent} event
- */
-function upgradeDB(event) {
-  // const {newVersion, oldVersion} = event;
-
-  // If the "dogs" store already exists, delete it.
-  const txn = event.target?.transaction;
-  if (txn) {
-    const names = Array.from(txn.objectStoreNames);
-    if (names.includes(storeName)) idbEasy.deleteStore(storeName);
-  }
-
-  // Create the "dogs" store and its indexes.
-  const store = idbEasy.createStore(storeName, 'id', true);
-  idbEasy.createIndex(store, 'breed-index', 'breed');
-  idbEasy.createIndex(store, 'name-index', 'name');
-
-  initializeDB(txn);
 }
 
 /**
