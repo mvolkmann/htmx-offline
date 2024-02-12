@@ -37,7 +37,7 @@ setDogRouter();
  * @returns {Promise<Response | undefined>} that contains the resource
  */
 async function getResource(request) {
-  const log = false; // set to true for debugging
+  const debug = false; // set to true for debugging
   const url = new URL(request.url);
   const {href, pathname} = url;
 
@@ -46,19 +46,19 @@ async function getResource(request) {
   let resource = await caches.match(request);
 
   if (resource) {
-    if (log) console.log('service worker got', href, 'from cache');
+    if (debug) console.debug('service worker got', href, 'from cache');
   } else {
     try {
       // Get the resource from the network.
       resource = await fetch(request);
-      if (log) console.log('service worker got', href, 'from network');
+      if (debug) console.debug('service worker got', href, 'from network');
 
       if (shouldCache(pathname)) {
         // Save in the cache to avoid unnecessary future network requests
         // and supports offline use.
         const cache = await caches.open(cacheName);
         await cache.add(url);
-        if (log) console.log('service worker cached', href);
+        if (debug) console.debug('service worker cached', href);
       }
     } catch (error) {
       console.error('service-worker.js getResource:', error);
@@ -109,7 +109,7 @@ function shouldCache(pathname) {
  * This registers a listener for the "install" event of this service worker.
  */
 addEventListener('install', event => {
-  console.log('service-worker.js: installing');
+  console.info('service-worker.js: installing');
   // This allows existing browser tabs to use an
   // updated version of this service worker.
   skipWaiting();
@@ -119,7 +119,7 @@ addEventListener('install', event => {
  * This registers a listener for the "activate" event of this service worker.
  */
 addEventListener('activate', async event => {
-  console.log('service-worker.js: activating');
+  console.info('service-worker.js: activating');
 
   try {
     // Let browser clients know that the service worker is ready.
@@ -142,10 +142,7 @@ addEventListener('fetch', async event => {
   const url = new URL(request.url);
   const {pathname} = url;
 
-  console.log('service-worker.js fetch: request.method =', request.method);
-  console.log('service-worker.js fetch: pathname =', pathname);
   const match = dogRouter.match(request.method, pathname);
-  console.log('service-worker.js fetch: match =', match);
   const promise = match
     ? match.handler(match.params, request)
     : getResource(request);

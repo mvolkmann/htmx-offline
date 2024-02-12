@@ -228,11 +228,17 @@ export default class DogController {
   /**
    * Updates an existing Dog in the database.
    * @param {Dog} dog
-   * @returns {Promise<Dog>}
+   * @returns {Promise<Response>}
    */
   async updateDog(dog) {
     const ie = this.idbEasy;
-    await ie.updateRecordsByIndex('dogs', 'name-index', 'Snoopy', 'Woodstock');
-    return dog;
+    await ie.upsertRecord('dogs', dog);
+    const html = dogToTableRow(dog, true);
+    return new Response(html, {
+      headers: {
+        'Content-Type': 'application/html',
+        'HX-Trigger': 'selection-change'
+      }
+    });
   }
 }

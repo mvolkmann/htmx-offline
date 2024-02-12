@@ -138,10 +138,12 @@ export function getRouter(dogController) {
    * @returns {Promise<Response>}
    */
   // This handles renaming all dogs with the name "Snoopy" to "Woodstock".
-  router.put('/dog', async (params, request) => {
+  router.put('/dog/:id', async (params, request) => {
     const formData = await request.formData();
     /** @type Dog */
     const dog = Object.fromEntries(formData);
+    dog.id = Number(params['id']);
+    selectedId = 0;
     return dogController.updateDog(dog);
   });
 
