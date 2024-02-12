@@ -1,21 +1,15 @@
-async function registerServiceWorker() {
-  // All modern browsers support service workers.
-  if (!('serviceWorker' in navigator)) {
-    console.error('Your browser does not support service workers');
-    return;
-  }
-
+// All modern browsers support service workers.
+if ('serviceWorker' in navigator) {
   try {
-    // Register a service worker for this web app.
     await navigator.serviceWorker.register('service-worker.js', {
       type: 'module'
     });
   } catch (error) {
     console.error('sw-setup.js registerServiceWorker:', error);
   }
+} else {
+  console.error('Your browser does not support service workers');
 }
-
-registerServiceWorker();
 
 // Register to receive messages from the service worker.
 // These are sent with "client.postMessage" in the service worker.
@@ -36,3 +30,7 @@ navigator.serviceWorker.onmessage = event => {
     }
   }
 };
+
+// Including this line makes this a module,
+// which is needed to use "await" in the top-level code.
+export {};
