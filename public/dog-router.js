@@ -18,8 +18,8 @@ let idbEasy;
 let selectedId = 0;
 
 /**
- * This sets the dogRouter variable to a Router
- * that is used to handle API requests for dogs.
+ * This sets the idbEasy variable that is used to
+ * simplify interacting with an IndexedDB database.
  * I tried for a couple of hours to simplify this code
  * and couldn't arrive at an alternative that works.
  */
@@ -140,9 +140,9 @@ async function initializeDB(txn) {
 }
 
 /**
- * This creates the initial stores and indexes in the database
+ * This creates the initial store and indexes in the IndexedDB database
  * or upgrades existing ones.
- * Then it calls the initialize method to add sample data.
+ * Then it calls initializeDB to add sample data.
  * @param {IDBVersionChangeEvent} event
  */
 function upgradeDB(event) {
@@ -165,34 +165,12 @@ function upgradeDB(event) {
     if (names.includes(storeName)) idbEasy.deleteStore(storeName);
   }
 
-  // Recreate the "dogs" store and its indexes.
+  // Create the "dogs" store and its indexes.
   const store = idbEasy.createStore(storeName, 'id', true);
   idbEasy.createIndex(store, 'breed-index', 'breed');
   idbEasy.createIndex(store, 'name-index', 'name');
 
   initializeDB(txn);
-}
-
-/**
- * Adds a Dog to the database.
- * @param {Dog} dog
- * @returns {Promise<Response>} HTML for a new table row.
- */
-async function addDog(dog) {
-  dog.id = await idbEasy.createRecord('dogs', dog);
-  const html = dogToTableRow(dog);
-  return new Response(html, {
-    headers: {'Content-Type': 'application/html'}
-  });
-}
-
-/**
- * Deletes a Dog from the database.
- * @param {number} id
- * @return {Promise<void>}
- */
-async function deleteDog(id) {
-  return idbEasy.deleteRecordByKey('dogs', id);
 }
 
 /**
@@ -202,37 +180,6 @@ async function deleteDog(id) {
  */
 function getDog(id) {
   return idbEasy.getRecordByKey('dogs', id);
-}
-
-/**
- * This gets all the Dogs.
- * @returns {Promise<Response>}
- */
-async function getDogs() {
-  const dogs = await idbEasy.getAllRecords('dogs');
-  const sortedDogs = Array.from(dogs.values()).sort((a, b) =>
-    a.name.localeCompare(b.name)
-  );
-  const html = sortedDogs.map(dog => dogToTableRow(dog)).join('');
-  return new Response(html, {
-    headers: {'Content-Type': 'application/html'}
-  });
-}
-
-/**
- * Updates an existing Dog in the database.
- * @param {Dog} dog
- * @returns {Promise<Response>}
- */
-async function updateDog(dog) {
-  await idbEasy.upsertRecord('dogs', dog);
-  const html = dogToTableRow(dog, true);
-  return new Response(html, {
-    headers: {
-      'Content-Type': 'application/html',
-      'HX-Trigger': 'selection-change'
-    }
-  });
 }
 
 /**
@@ -250,7 +197,7 @@ const router = new Router();
  */
 router.delete('/dog/:id', async params => {
   const id = Number(params['id']);
-  await deleteDog(id);
+  await idbEasy.deleteRecordByKey('dogs', id);
   return new Response('');
 });
 
@@ -322,7 +269,16 @@ router.get('/form', async () => {
 });
 
 // This gets table rows for all the dogs.
-router.get('/rows', async () => getDogs());
+router.get('/rows', async () => {
+  const dogs = await idbEasy.getAllRecords('dogs');
+  const sortedDogs = Array.from(dogs.values()).sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
+  const html = sortedDogs.map(dog => dogToTableRow(dog)).join('');
+  return new Response(html, {
+    headers: {'Content-Type': 'application/html'}
+  });
+});
 
 /**
  * This selects a dog.
@@ -345,7 +301,11 @@ router.post('/dog', async (params, request) => {
   const formData = await request.formData();
   /** @type Dog */
   const dog = Object.fromEntries(formData);
-  return addDog(dog);
+  dog.id = await idbEasy.createRecord('dogs', dog);
+  const html = dogToTableRow(dog);
+  return new Response(html, {
+    headers: {'Content-Type': 'application/html'}
+  });
 });
 
 /**
@@ -362,8 +322,17 @@ router.put('/dog/:id', async (params, request) => {
   /** @type Dog */
   const dog = Object.fromEntries(formData);
   dog.id = Number(params['id']);
+
   selectedId = 0;
-  return updateDog(dog);
+
+  await idbEasy.upsertRecord('dogs', dog);
+  const html = dogToTableRow(dog, true);
+  return new Response(html, {
+    headers: {
+      'Content-Type': 'application/html',
+      'HX-Trigger': 'selection-change'
+    }
+  });
 });
 
 export function getRouteMatch(method, pathname) {
