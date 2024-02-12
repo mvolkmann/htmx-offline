@@ -14,23 +14,12 @@ button {
   }
 }
 
-/*
-form {
-  display: inline-flex;
-  flex-direction: column;
-  gap: 0.5rem;
+.buttons {
+  display: flex;
+  gap: 1rem;
 
-  background-color: lightyellow;
-  border-radius: 0.5rem;
-  margin-bottom: 1rem;
-  margin-top: 1rem;
-  padding: 0.5rem;
-
-  & button {
-    background-color: orange;
-  }
+  background-color: transparent;
 }
-*/
 
 h1 {
   color: orange;
@@ -85,10 +74,6 @@ td {
     background-color: transparent;
     color: white;
   }
-}
-
-td.buttons {
-  background-color: transparent;
 }
 
 th {

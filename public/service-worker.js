@@ -142,7 +142,10 @@ addEventListener('fetch', async event => {
   const url = new URL(request.url);
   const {pathname} = url;
 
+  console.log('service-worker.js fetch: request.method =', request.method);
+  console.log('service-worker.js fetch: pathname =', pathname);
   const match = dogRouter.match(request.method, pathname);
+  console.log('service-worker.js fetch: match =', match);
   const promise = match
     ? match.handler(match.params, request)
     : getResource(request);

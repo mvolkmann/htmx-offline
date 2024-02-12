@@ -29,8 +29,8 @@ export function getRouter(dogController) {
    * @param {Params} params
    * @returns {Promise<Response>}
    */
-  router.delete('/dog/:id', async ({params}) => {
-    const id = params.get('id');
+  router.delete('/dog/:id', async params => {
+    const id = Number(params['id']);
     await dogController.deleteDog(id);
     return new Response('');
   });
@@ -43,8 +43,8 @@ export function getRouter(dogController) {
     return new Response('', {headers: {'HX-Trigger': 'selection-change'}});
   });
 
-  router.get('/form', () => {
-    const selectedDog = dogController.getDog(selectedId);
+  router.get('/form', async () => {
+    const selectedDog = await dogController.getDog(selectedId);
 
     /** @type {[key: string]: string} */
     const attrs = {
@@ -104,6 +104,15 @@ export function getRouter(dogController) {
 
   // This gets table rows for all the dogs.
   router.get('/rows', async () => dogController.getDogs());
+
+  /**
+   * This selects a dog.
+   * @param {Params} params
+   */
+  router.get('/select/:id', params => {
+    selectedId = Number(params['id']);
+    return new Response('', {headers: {'HX-Trigger': 'selection-change'}});
+  });
 
   /**
    * This handles creating a new dog.

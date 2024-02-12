@@ -202,22 +202,11 @@ export default class DogController {
   /**
    * This gets the Dog with a given id.
    * @param {number} id
-   * @returns {Promise<Response>}
+   * @returns {Promise<Dog>}
    */
-  async getDog(id) {
+  getDog(id) {
     const ie = this.idbEasy;
-    const dog = await ie.getRecordByKey('dogs', id);
-    if (dog) {
-      const html = dogToTableRow(dog);
-      return new Response(html, {
-        headers: {'Content-Type': 'application/html'}
-      });
-    } else {
-      return new Response('', {
-        headers: {'Content-Type': 'application/html'},
-        status: 404
-      });
-    }
+    return ie.getRecordByKey('dogs', id);
   }
 
   /**
