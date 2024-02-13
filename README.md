@@ -6,18 +6,23 @@ It is a widely held belief that htmx cannot be used for apps that require
 offline functionality. This is a reasonable assumption given that htmx
 is all about sending HTTP requests. However, a service worker can intercept
 HTTP requests and process them. The processing could include interacting
-with an IndexedDB database. This enables all the functionality to work offline.
+with an IndexedDB database.
+For some web applications, this enables all the functionality to work offline.
 
 This repository implements a Progressive Web App (PWA)
 that demonstrates the approach described above.
+
+![app screenshot](htmx-offline-app.png)
 
 ## Steps to Run
 
 To run the app locally:
 
-- enter `bun install`
-- enter `bun dev`
-- browse localhost:3000
+- Install <a href="https://bun.sh" target="_blank">Bun</a>
+  if not already installed.
+- Enter `bun install`
+- Enter `bun dev`
+- Browse localhost:3000
 
 ## Limitations
 
@@ -28,14 +33,16 @@ The reason is that service workers must be implemented in JavaScript.
 
 ## Endpoint Routes
 
-The file `public/service-worker.js` adds an event listener for "fetch" events.
+The file `public/service-worker.js` adds an event listener
+that intercepts all "fetch" events.
+This includes all HTTP requests sent by htmx attributes.
 
-Some requests are handled by the service worker
-and do not result in a network request.
-The function `getRouteMatch` returns either
-a handler function for matching requested or `undefined`.
+The function `getRouteMatch` returns either a handler function or `undefined`.
+When a handler function is returned,
+the request is handled by the service worker
+When `undefined` is returned, the requests is forwarded to the network.
 
-If `getRouteMatch` returns `undefined`, the function `getResource` is called.
+The function `getResource` is called to handle requests to the network.
 This checks the cache for a previously cached response.
 If one is found, that is returned.
 Otherwise, a network request is sent, the response is cached,
@@ -44,7 +51,7 @@ and the response is returned.
 For requests handled by the service worker, the small library (15 KB)
 <a href="https://github.com/berstend/tiny-request-router"
 target="_blank">tiny-request-router</a> is used.
-This associate HTTP verbs and URL paths
+This associates HTTP verbs and URL paths
 with functions that handle matching requests.
 The file `public/dog-router.js` defines all these endpoints.
 
