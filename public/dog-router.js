@@ -136,8 +136,6 @@ function setupDB() {
 
     idbEasy = new IDBEasy(db);
 
-    console.log('dog-router.js X: event.target =', event.target);
-
     // If the "dogs" store already exists, delete it.
     const request = /** @type {IDBOpenDBRequest} */ (event.target);
     const txn = request.transaction;

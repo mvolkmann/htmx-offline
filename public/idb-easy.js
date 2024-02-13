@@ -66,11 +66,10 @@ export default class IDBEasy {
    * @returns {Promise<number|string>} key of new record
    */
   createRecord(storeName, object, txn) {
-    const suppliedTxn = Boolean(txn);
-    if (!suppliedTxn) txn = this.db.transaction(storeName, 'readwrite');
-    const store = txn.objectStore(storeName);
+    const definiteTxn = this.ensureTxn(txn, storeName, 'readwrite');
+    const store = definiteTxn.objectStore(storeName);
     const request = store.add(object);
-    return requestToPromise(request, 'create record', suppliedTxn);
+    return requestToPromise(request, 'create record', Boolean(txn));
   }
 
   /**
@@ -107,10 +106,9 @@ export default class IDBEasy {
    * @returns {Promise<void>}
    */
   deleteRecordsByIndex(storeName, indexName, indexValue, txn) {
-    const suppliedTxn = Boolean(txn);
-    if (!suppliedTxn) txn = this.db.transaction(storeName, 'readwrite');
+    const definiteTxn = this.ensureTxn(txn, storeName, 'readwrite');
     return new Promise((resolve, reject) => {
-      const store = txn.objectStore(storeName);
+      const store = definiteTxn.objectStore(storeName);
       const keyPath = Array.isArray(store.keyPath)
         ? store.keyPath[0]
         : store.keyPath;
@@ -122,12 +120,12 @@ export default class IDBEasy {
         for (const record of records) {
           store.delete(record[keyPath]);
         }
-        if (!suppliedTxn) txn.commit();
+        if (!txn) definiteTxn.commit();
         resolve();
       };
       request.onerror = event => {
         console.error('failed to delete records by index');
-        txn.abort();
+        definiteTxn.abort();
         reject(event);
       };
     });
@@ -142,11 +140,10 @@ export default class IDBEasy {
    * @returns {Promise<void>}
    */
   deleteRecordByKey(storeName, key, txn) {
-    const suppliedTxn = Boolean(txn);
-    if (!suppliedTxn) txn = this.db.transaction(storeName, 'readwrite');
-    const store = txn.objectStore(storeName);
+    const definiteTxn = this.ensureTxn(txn, storeName, 'readwrite');
+    const store = definiteTxn.objectStore(storeName);
     const request = store.delete(key);
-    return requestToPromise(request, 'delete dog', suppliedTxn);
+    return requestToPromise(request, 'delete dog', Boolean(txn));
   }
 
   /**
@@ -176,11 +173,10 @@ export default class IDBEasy {
    * @returns {Promise<object[]>}
    */
   getAllRecords(storeName, txn) {
-    const suppliedTxn = Boolean(txn);
-    if (!suppliedTxn) txn = this.db.transaction(storeName, 'readonly');
-    const store = txn.objectStore(storeName);
+    const definiteTxn = this.ensureTxn(txn, storeName, 'readonly');
+    const store = definiteTxn.objectStore(storeName);
     const request = store.getAll();
-    return requestToPromise(request, 'get all records', suppliedTxn);
+    return requestToPromise(request, 'get all records', Boolean(txn));
   }
 
   /**
@@ -191,11 +187,10 @@ export default class IDBEasy {
    * @returns {Promise<object>}
    */
   getRecordByKey(storeName, key, txn) {
-    const suppliedTxn = Boolean(txn);
-    if (!suppliedTxn) txn = this.db.transaction(storeName, 'readonly');
-    const store = txn.objectStore(storeName);
+    const definiteTxn = this.ensureTxn(txn, storeName, 'readonly');
+    const store = definiteTxn.objectStore(storeName);
     const request = store.get(key);
-    return requestToPromise(request, 'get record by key', suppliedTxn);
+    return requestToPromise(request, 'get record by key', Boolean(txn));
   }
 
   /**
@@ -205,11 +200,10 @@ export default class IDBEasy {
    * @returns {Promise<number>}
    */
   getRecordCount(storeName, txn) {
-    const suppliedTxn = Boolean(txn);
-    if (!suppliedTxn) txn = this.db.transaction(storeName, 'readonly');
-    const store = txn.objectStore(storeName);
+    const definiteTxn = this.ensureTxn(txn, storeName, 'readonly');
+    const store = definiteTxn.objectStore(storeName);
     const request = store.count();
-    return requestToPromise(request, 'get record count', suppliedTxn);
+    return requestToPromise(request, 'get record count', Boolean(txn));
   }
 
   /**
@@ -222,12 +216,11 @@ export default class IDBEasy {
    * @returns {Promise<object[]>}
    */
   getRecordsByIndex(storeName, indexName, indexValue, txn) {
-    const suppliedTxn = Boolean(txn);
-    if (!suppliedTxn) txn = this.db.transaction(storeName, 'readonly');
-    const store = txn.objectStore(storeName);
+    const definiteTxn = this.ensureTxn(txn, storeName, 'readonly');
+    const store = definiteTxn.objectStore(storeName);
     const index = store.index(indexName);
     const request = index.getAll(indexValue);
-    return requestToPromise(request, 'get records by index', suppliedTxn);
+    return requestToPromise(request, 'get records by index', Boolean(txn));
   }
 
   /**
@@ -277,10 +270,9 @@ export default class IDBEasy {
    * @returns {Promise<void>}
    */
   updateRecordsByIndex(storeName, indexName, oldValue, newValue, txn) {
-    const suppliedTxn = Boolean(txn);
-    if (!suppliedTxn) txn = this.db.transaction(storeName, 'readwrite');
+    const definiteTxn = this.ensureTxn(txn, storeName, 'readwrite');
     return new Promise((resolve, reject) => {
-      const store = txn.objectStore(storeName);
+      const store = definiteTxn.objectStore(storeName);
       const index = store.index(indexName);
       const request = index.getAll(oldValue);
       request.onsuccess = event => {
@@ -292,12 +284,12 @@ export default class IDBEasy {
           record[keyPath] = newValue;
           store.put(record);
         }
-        if (!suppliedTxn) txn.commit();
+        if (!txn) definiteTxn.commit();
         resolve();
       };
       request.onerror = event => {
         console.error('failed to update records by index');
-        txn.abort();
+        definiteTxn.abort();
         reject(event);
       };
     });
@@ -311,10 +303,9 @@ export default class IDBEasy {
    * @returns {Promise<object>}
    */
   upsertRecord(storeName, object, txn) {
-    const suppliedTxn = Boolean(txn);
-    if (!suppliedTxn) txn = this.db.transaction(storeName, 'readwrite');
-    const store = txn.objectStore(storeName);
+    const definiteTxn = this.ensureTxn(txn, storeName, 'readwrite');
+    const store = definiteTxn.objectStore(storeName);
     const request = store.put(object);
-    return requestToPromise(request, 'update dog', suppliedTxn);
+    return requestToPromise(request, 'update dog', Boolean(txn));
   }
 }
