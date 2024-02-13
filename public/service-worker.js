@@ -70,7 +70,6 @@ addEventListener('install', event => {
   console.info('service-worker.js: installing');
   // This allows existing browser tabs to use an
   // updated version of this service worker.
-  // @ts-ignore
   skipWaiting();
 });
 
@@ -82,7 +81,6 @@ addEventListener('activate', async event => {
 
   try {
     // Let browser clients know that the service worker is ready.
-    // @ts-ignore
     const matches = await clients.matchAll({includeUncontrolled: true});
     for (const client of matches) {
       // setup.js listens for this message.

@@ -3,8 +3,15 @@
 
 import IDBEasy from './idb-easy.js';
 import {button, div, form, input, label, td, tr} from './js2html.js';
-// import {Params, Router} from './tiny-request-router.mjs';
+/*
+import elements from './js2html.js';
+const {button, div, form, input, label, td, tr} = elements;
+*/
 import {Router} from './tiny-request-router.mjs';
+
+/** @typedef {import('./types.d.ts').Dog} Dog } */
+/** @typedef {import('./types.d.ts').MyRouter} MyRouter */
+/** @typedef {import('./types.d.ts').RouteMatch} RouteMatch */
 
 // These are for an IndexedDB store.
 const dbName = 'myDB';
@@ -17,13 +24,6 @@ let idbEasy; // set in setupDB
 let selectedId = 0;
 
 setupDB();
-
-/**
- * @typedef {object} Dog
- * @property {number} id
- * @property {string} name
- * @property {string} breed
- */
 
 /**
  * Converts a Dog object to an HTML string.
@@ -71,6 +71,17 @@ function dogToTableRow(dog, updating = false) {
       )
     ])
   ]);
+}
+
+/**
+ * This creates a Dog object from the FormData in a Request.
+ * @param {Request} request
+ * @returns {Promise<Dog>}
+ */
+async function requestToDog(request) {
+  const formData = await request.formData();
+  // @ts-ignore
+  return /** @type {Dog} */ (Object.fromEntries(formData));
 }
 
 /**
@@ -160,58 +171,18 @@ function setupDB() {
 
 //-----------------------------------------------------------------------------
 
-/** @typedef {{[key: string]: any}} StringToAny */
-
-/**
- * @callback RouteCallback
- * @param {StringToAny} [params]
- * @param {Request} [request]
- * @returns {Promise<Response>}
- */
-
-/**
- * @typedef {function} RouteHandler
- * @param {string} path
- * @param {RouteCallback} handler
- * @param {StringToAny} [options]
- * @returns {void}
- */
-
-/**
- * @typedef {object} RouteMatch
- * @property {RouteCallback} handler
- * @property {StringToAny} params
- */
-
-/**
- * @typedef {function} RouterMatchFunction
- * @param {string} method
- * @param {string} pathname
- * @returns {RouterMatch}
- */
-
-/**
- * @typedef {object} MyRouter
- * @property {RouteHandler} delete
- * @property {RouteHandler} get
- * @property {RouterMatchFunction} match
- * @property {RouteHandler} patch
- * @property {RouteHandler} post
- * @property {RouteHandler} put
- */
-
 const router = /** @type {MyRouter} */ (new Router());
 
 // This deletes the dog with a given id.
-/** @type {Router} */
 router.delete('/dog/:id', async params => {
-  const id = Number(params['id']);
+  // params will always be present here since the route has a parameter.
+  const id = params ? Number(params['id']) : 0;
   await idbEasy.deleteRecordByKey('dogs', id);
   return new Response('');
 });
 
 // This deselects the currently selected dog.
-router.get('/deselect', () => {
+router.get('/deselect', async () => {
   selectedId = 0;
   return new Response('', {headers: {'HX-Trigger': 'selection-change'}});
 });
@@ -291,16 +262,16 @@ router.get('/rows', async () => {
 });
 
 // This selects a dog with a given id.
-router.get('/select/:id', params => {
-  selectedId = Number(params['id']);
+
+router.get('/select/:id', async params => {
+  // params will always be present here since the route has a parameter.
+  selectedId = params ? Number(params['id']) : 0;
   return new Response('', {headers: {'HX-Trigger': 'selection-change'}});
 });
 
 // This creates a new dog.
 router.post('/dog', async (params, request) => {
-  const formData = await request.formData();
-  /** @type {Dog} */
-  const dog = /** @type {Dog} */ (Object.fromEntries(formData));
+  const dog = await requestToDog(request);
   const id = await idbEasy.createRecord('dogs', dog);
   dog.id = Number(id);
   const html = dogToTableRow(dog);
@@ -311,8 +282,7 @@ router.post('/dog', async (params, request) => {
 
 // This updates an existing dog.
 router.put('/dog/:id', async (params, request) => {
-  const formData = await request.formData();
-  const dog = /** @type {Dog} */ (Object.fromEntries(formData));
+  const dog = await requestToDog(request);
   dog.id = Number(params['id']);
 
   selectedId = 0;
@@ -331,7 +301,7 @@ router.put('/dog/:id', async (params, request) => {
  * This function is used by the "fetch" handler in service-worker.js.
  * @param {string} method
  * @param {string} pathname
- * @returns {RouteMatch}
+ * @returns {RouteMatch | undefined}
  */
 export function getRouteMatch(method, pathname) {
   return router.match(method, pathname);
