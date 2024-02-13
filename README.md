@@ -134,8 +134,8 @@ are defined in the file [public/types.d.ts](/public/types.d.ts).
 There are several places in the code that require type casting.
 A JSDoc typecast always has the form
 
-```js
-/** @type {some-type} */ (some - expression);
+```text
+/** @type {some-type} */ (some-expression);
 ```
 
 For example, the following code queries an IndexedDB database collection
