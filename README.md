@@ -55,7 +55,7 @@ adds an event listener that intercepts all "fetch" events.
 This includes all HTTP requests sent by htmx attributes.
 
 The function
-[getRouteMatch](../blob/7d93c43e0fdb3ce4d25838410eb42d3a93eb6e5d/public/dog-router.js#L303)
+[getRouteMatch](https://github.com/mvolkmann/htmx-offline/blob/c9b3fc4cfd247e63e395444a463f5ad291f22bf5/public/dog-router.js#L303)
 returns either a handler function or `undefined`.
 When a handler function is returned,
 the request is handled by the service worker.
