@@ -68,14 +68,16 @@ There are many approaches that endpoints can use to generate HTML.
 Each programming language tends to support
 templating libraries that are unique to the language.
 
-Some JavaScript engines such as Bun support using JSX to generate HTML.
-Unfortunately we can't use JSX in a service worker.
+Some JavaScript run-times such as Bun support using JSX to generate HTML.
+Unfortunately we can't use JSX in a service worker because
+that relies on the browser JavaScript run-time and not Bun.
 
 This application uses a custom library for HTML generation
-that is very small and quite easy to use. See `public/js2html.js`
-and its associated unit tests in `public/js2html.test.js`.
+that is very small (3 KB) and quite easy to use.
+See `public/js2html.js` and its
+associated unit tests in `public/js2html.test.js`.
 This provides a function for each supported HTML element.
-These functions can be passed an object describing HTML attributes
+These functions can be passed an optional object describing HTML attributes
 and the element content.
 
 For example, the following code generates
@@ -90,9 +92,9 @@ const html = p({id: 'p1', class: 'greet'}, 'Hello, World!');
 All modern web browsers support using
 [IndexedDB](https://mvolkmann.github.io/blog/topics/#/blog/indexeddb/)
 to persist data locally.
-Using the IndexedDB API can be a bit tedious.
+The IndexedDB API is a bit tedious to use.
 This application uses a custom library for interacting with IndexedDB databases
-that is small and easier to use.
+that is small (10 KB) and easier to use.
 See `public/idb-easy.js`.
 
 ## Type Checking
@@ -101,15 +103,14 @@ One goal of this application is to avoid having a build step.
 This precludes the use of TypeScript.
 However, we can still get type checking by using JSDoc comments.
 
-This application serves as a good example
-of the JSDoc approach to type checking.
 Type issues are flagged in code editors like VS Code.
 
 Type errors can be reported by running the command `tsx --noEmit`.
 The `package.json` file defines the script "check"
 which can be run by entering `bun check`.
 
-Some of the types used in this application are defined in `public/types.d.ts`.
+Some of the types used in this application
+are defined in the file `public/types.d.ts`.
 
 There are several places in the code that require type casting.
 A JSDoc typecast always has the form
