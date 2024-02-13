@@ -115,8 +115,8 @@ export default class IDBEasy {
       const index = store.index(indexName);
       const request = index.getAll(indexValue);
       request.onsuccess = event => {
-        /** @type {Record[]} */
-        const records = event.target?.result ?? [];
+        const request = /** @type {IDBRequest} */ (event.target);
+        const records = request.result ?? [];
         for (const record of records) {
           store.delete(record[keyPath]);
         }
@@ -276,8 +276,8 @@ export default class IDBEasy {
       const index = store.index(indexName);
       const request = index.getAll(oldValue);
       request.onsuccess = event => {
-        /** @type {Record[]} */
-        const records = event.target?.result ?? [];
+        const request = /** @type {IDBRequest} */ (event.target);
+        const records = request.result ?? [];
         for (const record of records) {
           let {keyPath} = index;
           if (Array.isArray(keyPath)) keyPath = keyPath[0];
