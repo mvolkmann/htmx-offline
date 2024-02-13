@@ -10,6 +10,7 @@ import {Router} from './tiny-request-router.mjs';
 /** @typedef {import('./types.d.ts').Dog} Dog } */
 /** @typedef {import('./types.d.ts').MyRouter} MyRouter */
 /** @typedef {import('./types.d.ts').RouteMatch} RouteMatch */
+/** @typedef {{[key: string]: string}} StringToString */
 
 // These are for an IndexedDB store.
 const dbName = 'myDB';
@@ -31,8 +32,6 @@ setupDB();
  */
 function dogToTableRow(dog, updating = false) {
   const {breed, id, name} = dog;
-
-  /** @typedef {{[key: string]: string}} StringToString */
 
   /** @type {StringToString} */
   const attrs = {
@@ -191,7 +190,7 @@ router.get('/form', async () => {
     await idbEasy.getRecordByKey('dogs', selectedId)
   );
 
-  /** @type {{[key: string]: string}} */
+  /** @type {StringToString}} */
   const attrs = {
     'hx-on:htmx:after-request': 'this.reset()'
   };
