@@ -89,7 +89,7 @@ that relies on the browser JavaScript run-time and not Bun.
 This application uses a custom library for HTML generation
 that is very small (3 KB) and quite easy to use.
 See [public/js2html.js](/public/js2html.js) and its
-associated unit tests in [public/js2html.test.js](/public/js2html.test.js)`.
+associated unit tests in [public/js2html.test.js](/public/js2html.test.js).
 This provides a function for each supported HTML element.
 These functions can be passed an optional object describing HTML attributes
 and the element content.
@@ -128,12 +128,15 @@ Type errors can be reported by running the command `tsx --noEmit`.
 The [package.json](/package.json) file defines the script "check"
 which can be run by entering `bun check`.
 
-Some of the types used in this application
+Most of the custom types used in this application
 are defined in the file [public/types.d.ts](/public/types.d.ts).
 
 There are several places in the code that require type casting.
 A JSDoc typecast always has the form
-`/** @type {some-type} */ (some-expression)`.
+
+```js
+/** @type {some-type} */ (some - expression);
+```
 
 For example, the following code queries an IndexedDB database collection
 named "dogs" and obtains an array of objects.
