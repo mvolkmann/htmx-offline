@@ -11,8 +11,17 @@ For some web applications, this enables all the functionality to work offline.
 
 This repository implements a Progressive Web App (PWA)
 that demonstrates the approach described above.
+It displays descriptions of dogs in a table.
+Dogs can be added, modified, and deleted.
 
 ![app screenshot](htmx-offline-app.png)
+
+To modify a dog, hover over its table row and click the pencil icon that appears to the right of the row.
+This will populate the form fields at the top and change the "Add" button to "Update".
+Modify the input values and click the "Update" button to save the changes.
+
+To delete a dog, hover over its table row and click the "X" that appears to the right of the row.
+This will prompt for confirmation before deleting the dog.
 
 ## Steps to Run
 
