@@ -2,11 +2,9 @@
 // These are not implemented by a real HTTP server.
 
 import IDBEasy from './idb-easy.js';
-import {button, div, form, input, label, td, tr} from './js2html.js';
-/*
+//import {button, div, form, input, label, td, tr} from './js2html.js';
 import elements from './js2html.js';
 const {button, div, form, input, label, td, tr} = elements;
-*/
 import {Router} from './tiny-request-router.mjs';
 
 /** @typedef {import('./types.d.ts').Dog} Dog } */

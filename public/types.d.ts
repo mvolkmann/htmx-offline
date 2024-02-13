@@ -1,3 +1,10 @@
+export declare type ContentFn = (
+  attrs: Attributes | Children,
+  children?: Children
+) => string;
+
+export declare type SelfClosingFn = (attrs?: Attributes) => string;
+
 export declare type Dog = {
   id: number;
   name: string;

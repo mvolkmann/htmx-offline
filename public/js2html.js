@@ -3,14 +3,14 @@
  * generate strings of HTML from JavaScript.
  */
 
-// See https://joshuatz.com/posts/2021/strongly-typed-service-workers/
-// for details on declaring TypeScript types in service workers.
+/** @typedef {Object.<string, boolean | number | string>} Attributes */
+/** @typedef {string[] | number | string} Children */
 
 /**
  * Generates an HTML string for an element with a close tag.
  * @param {string} name
- * @param {Object.<string, boolean | number | string>} attrs
- * @param {string[]} children
+ * @param {Attributes | Children} [attrs]
+ * @param {Children} [children]
  * @returns string - the HTML
  */
 export function el(name, attrs, children) {
@@ -50,7 +50,7 @@ export function el(name, attrs, children) {
 /**
  * Generates an HTML string for a self-closing element.
  * @param {string} name
- * @param {Object.<string, boolean | number | string>} attrs
+ * @param {Attributes} [attrs]
  * @returns string - the HTML
  */
 export function elc(name, attrs) {
@@ -71,68 +71,48 @@ export function elc(name, attrs) {
   return html;
 }
 
-/**
- * Generates an HTML string for an anchor tag.
- * @param {Object.<string, boolean | number | string>} attrs
- * @param {[string]} children
- * @returns string - the HTML
- */
-export const a = (attrs, children) => el('a', attrs, children);
+const contentElements = [
+  'a',
+  'body',
+  'button',
+  'div',
+  'form',
+  'head',
+  'html',
+  'label',
+  'li',
+  'ol',
+  'option',
+  'p',
+  'script',
+  'section',
+  'select',
+  'span',
+  'table',
+  'tbody',
+  'td',
+  'tfoot',
+  'th',
+  'thead',
+  'tr',
+  'ul'
+];
+const selfClosingElements = ['br', 'hr', 'img', 'input', 'link', 'meta'];
 
-// The remaining functions need the same JSDoc types as the "a" function.
-// I decided not to clutter this file with those comments.
+/** @typedef {import('./types.d.ts').ContentFn} ContentFn } */
+/** @typedef {import('./types.d.ts').SelfClosingFn} SelfClosingFn } */
 
-// @ts-ignore
-export const body = (attrs, children) => el('body', attrs, children);
-// @ts-ignore
-export const br = attrs => elc('br', attrs);
-// @ts-ignore
-export const button = (attrs, children) => el('button', attrs, children);
-// @ts-ignore
-export const div = (attrs, children) => el('div', attrs, children);
-// @ts-ignore
-export const form = (attrs, children) => el('form', attrs, children);
-// @ts-ignore
-export const head = (attrs, children) => el('head', attrs, children);
-// @ts-ignore
-export const hr = attrs => elc('hr', attrs);
-// @ts-ignore
-export const html = (attrs, children) => el('html', attrs, children);
-// @ts-ignore
-export const img = attrs => elc('img', attrs);
-// @ts-ignore
-export const input = attrs => elc('input', attrs);
-// @ts-ignore
-export const label = (attrs, children) => el('label', attrs, children);
-// @ts-ignore
-export const li = (attrs, children) => el('li', attrs, children);
-// @ts-ignore
-export const ol = (attrs, children) => el('ol', attrs, children);
-// @ts-ignore
-export const option = (attrs, children) => el('option', attrs, children);
-// @ts-ignore
-export const p = (attrs, children) => el('p', attrs, children);
-// @ts-ignore
-export const script = (attrs, children) => el('script', attrs, children);
-// @ts-ignore
-export const section = (attrs, children) => el('section', attrs, children);
-// @ts-ignore
-export const select = (attrs, children) => el('select', attrs, children);
-// @ts-ignore
-export const span = (attrs, children) => el('span', attrs, children);
-// @ts-ignore
-export const table = (attrs, children) => el('table', attrs, children);
-// @ts-ignore
-export const tbody = (attrs, children) => el('tbody', attrs, children);
-// @ts-ignore
-export const td = (attrs, children) => el('td', attrs, children);
-// @ts-ignore
-export const tfoot = (attrs, children) => el('tfoot', attrs, children);
-// @ts-ignore
-export const th = (attrs, children) => el('th', attrs, children);
-// @ts-ignore
-export const thead = (attrs, children) => el('thead', attrs, children);
-// @ts-ignore
-export const tr = (attrs, children) => el('tr', attrs, children);
-// @ts-ignore
-export const ul = (attrs, children) => el('ul', attrs, children);
+/** @type {{[name: string]: (ContentFn | SelfClosingFn)}} */
+const elements = {};
+
+for (const name of contentElements) {
+  elements[name] = /** @type {ContentFn} */ (
+    (attrs, children) => el(name, attrs, children)
+  );
+}
+
+for (const name of selfClosingElements) {
+  elements[name] = /** @type {SelfClosingFn} */ (attrs => elc(name, attrs));
+}
+
+export default elements;
