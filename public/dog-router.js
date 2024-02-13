@@ -10,7 +10,7 @@ import {Router} from './tiny-request-router.mjs';
 /** @typedef {import('./types.d.ts').Dog} Dog } */
 /** @typedef {import('./types.d.ts').MyRouter} MyRouter */
 /** @typedef {import('./types.d.ts').RouteMatch} RouteMatch */
-/** @typedef {{[key: string]: string}} StringToString */
+/** @typedef {import('./types.d.ts').StringToString} StringToString */
 
 // These are for an IndexedDB store.
 const dbName = 'myDB';

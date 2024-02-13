@@ -3,6 +3,8 @@
  * generate strings of HTML from JavaScript.
  */
 
+/** @typedef {import('./types.d.ts').ContentFn} ContentFn } */
+/** @typedef {import('./types.d.ts').SelfClosingFn} SelfClosingFn } */
 /** @typedef {Object.<string, boolean | number | string>} Attributes */
 /** @typedef {string[] | number | string} Children */
 
@@ -98,9 +100,6 @@ const contentElements = [
   'ul'
 ];
 const selfClosingElements = ['br', 'hr', 'img', 'input', 'link', 'meta'];
-
-/** @typedef {import('./types.d.ts').ContentFn} ContentFn } */
-/** @typedef {import('./types.d.ts').SelfClosingFn} SelfClosingFn } */
 
 /** @type {{[name: string]: (ContentFn | SelfClosingFn)}} */
 const elements = {};

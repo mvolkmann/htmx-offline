@@ -32,6 +32,15 @@ To run the app locally:
 - Enter `bun dev`
 - Browse localhost:3000
 
+To reset the state of the application in Chrome,
+including unregistering the service worker,
+clearing the IndexedDB database, and clearing the cache:
+
+- Open the DevTools.
+- Click the "Application" tab.
+- Click "Storage" in the left nav.
+- Click the "Clear site data" button.
+
 ## Limitations
 
 One of the benefits of htmx is that it enables using any programming language

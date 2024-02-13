@@ -1,5 +1,8 @@
 /// <reference lib="webworker" />
 
+/** @typedef {import('./types.d.ts').RouteMatch} RouteMatch */
+/** @typedef {import('./types.d.ts').StringToAny} StringToAny */
+
 // This is tedious, but necessary to force type assertion.
 const self = /** @type {ServiceWorkerGlobalScope} */ (
   /** @type {unknown} */ (globalThis.self)
@@ -101,14 +104,6 @@ addEventListener('activate', async event => {
  * @param {StringToAny} [params]
  * @param {Request} [request]
  * @returns {Promise<Response>}
- */
-
-/** @typedef {{[key: string]: any}} StringToAny */
-
-/**
- * @typedef {object} RouteMatch
- * @property {RouteCallback} handler
- * @property {StringToAny} params
  */
 
 /**

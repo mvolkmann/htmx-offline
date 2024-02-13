@@ -11,7 +11,9 @@ export declare type Dog = {
   breed: string;
 };
 
-type StringToAny = {[key: string]: any};
+export declare type StringToAny = {[key: string]: any};
+
+export declare type StringToString = {[key: string]: string};
 
 type RouteCallback = (
   params: StringToAny,

@@ -1,3 +1,5 @@
+/** @typedef {import('./types.d.ts').StringToString} StringToString */
+
 /**
  * This returns a Promise that resolves to the result of a given request.
  * @param {IDBRequest} request
@@ -93,8 +95,6 @@ export default class IDBEasy {
     const request = indexedDB.deleteDatabase(dbName);
     return requestToPromise(request, 'delete database');
   }
-
-  /** @typedef {{[key: string]: string}} Record */
 
   /**
    * This deletes all the records in a given store
