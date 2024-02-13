@@ -27,8 +27,7 @@ This will prompt for confirmation before deleting the dog.
 
 To run the app locally:
 
-- Install <a href="https://bun.sh" target="_blank">Bun</a>
-  if not already installed.
+- Install [Bun](https://bun.sh) if not already installed.
 - Enter `bun install`
 - Enter `bun dev`
 - Browse localhost:3000
@@ -58,8 +57,7 @@ Otherwise, a network request is sent, the response is cached,
 and the response is returned.
 
 For requests handled by the service worker, the small library (15 KB)
-<a href="https://github.com/berstend/tiny-request-router" target="_blank">
-tiny-request-router</a> is used.
+[tiny-request-router](https://github.com/berstend/tiny-request-router) is used.
 This associates HTTP verbs and URL paths
 with functions that handle matching requests.
 The file `public/dog-router.js` defines all these endpoints.
@@ -90,8 +88,7 @@ const html = p({id: 'p1', class: 'greet'}, 'Hello, World!');
 ## Persistence
 
 All modern web browsers support using
-<a href="/blog/topics/#/blog/indexeddb" target="_blank">IndexedDB</a>
-to persist data locally.
+[IndexedDB](/blog/topics/#/blog/indexeddb) to persist data locally.
 Using the IndexedDB API can be a bit tedious.
 This application uses a custom library for interacting with IndexedDB databases
 that is small and easier to use.
