@@ -1,5 +1,10 @@
 /// <reference lib="webworker" />
 
+// This is tedious, but necessary to force type assertion.
+const self = /** @type {ServiceWorkerGlobalScope} */ (
+  /** @type {unknown} */ (globalThis.self)
+);
+
 import {getRouteMatch} from './dog-router.js';
 
 const cacheName = 'pwa-demo-v1';
@@ -70,7 +75,7 @@ addEventListener('install', event => {
   console.info('service-worker.js: installing');
   // This allows existing browser tabs to use an
   // updated version of this service worker.
-  skipWaiting();
+  self.skipWaiting();
 });
 
 /**
@@ -81,7 +86,7 @@ addEventListener('activate', async event => {
 
   try {
     // Let browser clients know that the service worker is ready.
-    const matches = await clients.matchAll({includeUncontrolled: true});
+    const matches = await self.clients.matchAll({includeUncontrolled: true});
     for (const client of matches) {
       // setup.js listens for this message.
       client.postMessage('ready');
