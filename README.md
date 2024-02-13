@@ -50,11 +50,13 @@ The reason is that service workers must be implemented in JavaScript.
 
 ## Endpoint Routes
 
-The file `public/service-worker.js` adds an event listener
-that intercepts all "fetch" events.
+The file [public/service-worker.js](/public/service-worker.js)
+adds an event listener that intercepts all "fetch" events.
 This includes all HTTP requests sent by htmx attributes.
 
-The function `getRouteMatch` returns either a handler function or `undefined`.
+The function
+[getRouteMatch](/blob/7d93c43e0fdb3ce4d25838410eb42d3a93eb6e5d/public/dog-router.js#L303)
+returns either a handler function or `undefined`.
 When a handler function is returned,
 the request is handled by the service worker.
 When `undefined` is returned, the requests is forwarded to the network.
@@ -83,8 +85,8 @@ that relies on the browser JavaScript run-time and not Bun.
 
 This application uses a custom library for HTML generation
 that is very small (3 KB) and quite easy to use.
-See `public/js2html.js` and its
-associated unit tests in `public/js2html.test.js`.
+See [public/js2html.js](/public/js2html.js) and its
+associated unit tests in [public/js2html.test.js](/public/js2html.test.js)`.
 This provides a function for each supported HTML element.
 These functions can be passed an optional object describing HTML attributes
 and the element content.
@@ -109,7 +111,7 @@ to persist data locally.
 The IndexedDB API is a bit tedious to use.
 This application uses a custom library for interacting with IndexedDB databases
 that is small (10 KB) and easier to use.
-See [idb-easy.js](/blob/main/public/idb-easy.js).
+See [idb-easy.js](/public/idb-easy.js).
 
 ## Type Checking
 
@@ -124,7 +126,7 @@ The `package.json` file defines the script "check"
 which can be run by entering `bun check`.
 
 Some of the types used in this application
-are defined in the file `public/types.d.ts`.
+are defined in the file [public/types.d.ts](/public/types.d.ts).
 
 There are several places in the code that require type casting.
 A JSDoc typecast always has the form
