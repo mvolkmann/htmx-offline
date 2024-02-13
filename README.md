@@ -88,7 +88,8 @@ const html = p({id: 'p1', class: 'greet'}, 'Hello, World!');
 ## Persistence
 
 All modern web browsers support using
-[IndexedDB](/blog/topics/#/blog/indexeddb) to persist data locally.
+[IndexedDB](https://mvolkmann.github.io/blog/topics/#/blog/indexeddb/)
+to persist data locally.
 Using the IndexedDB API can be a bit tedious.
 This application uses a custom library for interacting with IndexedDB databases
 that is small and easier to use.
@@ -99,8 +100,12 @@ See `public/idb-easy.js`.
 One goal of this application is to avoid having a build step.
 This precludes the use of TypeScript.
 However, we can still get type checking by using JSDoc comments.
-This supports flagging type issues in code editors like VS Code.
-It also supports reporting type errors by running the command `tsx --noEmit`.
+
+This application serves as a good example
+of the JSDoc approach to type checking.
+Type issues are flagged in code editors like VS Code.
+
+Type errors can be reported by running the command `tsx --noEmit`.
 The `package.json` file defines the script "check"
 which can be run by entering `bun check`.
 
