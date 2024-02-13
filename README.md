@@ -54,7 +54,8 @@ The file [public/service-worker.js](/public/service-worker.js)
 adds an event listener that intercepts all "fetch" events.
 This includes all HTTP requests sent by htmx attributes.
 
-The function `getRouteMatch` defined at the bottom of [public/dog-router.js]
+The function `getRouteMatch` defined at the bottom of
+[public/dog-router.js](/public/dog-router.js)
 returns either a handler function or `undefined`.
 When a handler function is returned,
 the request is handled by the service worker.
