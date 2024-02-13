@@ -1,3 +1,5 @@
+/// <reference lib="webworker" />
+
 import {getRouteMatch} from './dog-router.js';
 
 const cacheName = 'pwa-demo-v1';
@@ -68,6 +70,7 @@ addEventListener('install', event => {
   console.info('service-worker.js: installing');
   // This allows existing browser tabs to use an
   // updated version of this service worker.
+  // @ts-ignore
   skipWaiting();
 });
 
@@ -79,6 +82,7 @@ addEventListener('activate', async event => {
 
   try {
     // Let browser clients know that the service worker is ready.
+    // @ts-ignore
     const matches = await clients.matchAll({includeUncontrolled: true});
     for (const client of matches) {
       // setup.js listens for this message.
@@ -116,8 +120,8 @@ addEventListener('fetch', async event => {
   const match = /** @type {RouteMatch} */ (
     getRouteMatch(request.method, pathname)
   );
-  const promise = match
-    ? match.handler(match.params, request)
-    : getResource(request);
+  const promise = /** @type {Promise<Response>} */ (
+    match ? match.handler(match.params, request) : getResource(request)
+  );
   event.respondWith(promise);
 });
