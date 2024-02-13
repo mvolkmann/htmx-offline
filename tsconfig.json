@@ -5,7 +5,7 @@
     "esModuleInterop": true,
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
-    "lib": ["esnext", "webworker"],
+    "lib": ["esnext"],
     "module": "ESNext",
     "moduleResolution": "node",
     "noEmit": true,
