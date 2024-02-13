@@ -48,7 +48,7 @@ This includes all HTTP requests sent by htmx attributes.
 
 The function `getRouteMatch` returns either a handler function or `undefined`.
 When a handler function is returned,
-the request is handled by the service worker
+the request is handled by the service worker.
 When `undefined` is returned, the requests is forwarded to the network.
 
 The function `getResource` is called to handle requests to the network.
@@ -58,8 +58,8 @@ Otherwise, a network request is sent, the response is cached,
 and the response is returned.
 
 For requests handled by the service worker, the small library (15 KB)
-<a href="https://github.com/berstend/tiny-request-router"
-target="_blank">tiny-request-router</a> is used.
+<a href="https://github.com/berstend/tiny-request-router" target="_blank">
+tiny-request-router</a> is used.
 This associates HTTP verbs and URL paths
 with functions that handle matching requests.
 The file `public/dog-router.js` defines all these endpoints.
