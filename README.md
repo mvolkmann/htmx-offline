@@ -109,7 +109,7 @@ to persist data locally.
 The IndexedDB API is a bit tedious to use.
 This application uses a custom library for interacting with IndexedDB databases
 that is small (10 KB) and easier to use.
-See `public/idb-easy.js`.
+See [idb-easy.js](/blob/main/public/idb-easy.js).
 
 ## Type Checking
 
