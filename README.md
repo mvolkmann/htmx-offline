@@ -54,14 +54,15 @@ The file [public/service-worker.js](/public/service-worker.js)
 adds an event listener that intercepts all "fetch" events.
 This includes all HTTP requests sent by htmx attributes.
 
-The function
-[getRouteMatch](https://github.com/mvolkmann/htmx-offline/blob/c9b3fc4cfd247e63e395444a463f5ad291f22bf5/public/dog-router.js#L303)
+The function `getRouteMatch` defined at the bottom of [public/dog-router.js]
 returns either a handler function or `undefined`.
 When a handler function is returned,
 the request is handled by the service worker.
 When `undefined` is returned, the requests is forwarded to the network.
 
-The function `getResource` is called to handle requests to the network.
+The function `getResource` defined near the top of
+[public/service-worker.js](/public/service-worker.js)
+is called to handle requests to the network.
 This checks the cache for a previously cached response.
 If one is found, that is returned.
 Otherwise, a network request is sent, the response is cached,
@@ -71,7 +72,8 @@ For requests handled by the service worker, the small library (15 KB)
 [tiny-request-router](https://github.com/berstend/tiny-request-router) is used.
 This associates HTTP verbs and URL paths
 with functions that handle matching requests.
-The file `public/dog-router.js` defines all these endpoints.
+The file [public/dog-router.js](/public/dog-router.js)
+defines all these endpoints.
 
 ## HTML Generation
 
@@ -122,7 +124,7 @@ However, we can still get type checking by using JSDoc comments.
 Type issues are flagged in code editors like VS Code.
 
 Type errors can be reported by running the command `tsx --noEmit`.
-The `package.json` file defines the script "check"
+The [package.json](/package.json) file defines the script "check"
 which can be run by entering `bun check`.
 
 Some of the types used in this application
