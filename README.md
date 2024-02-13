@@ -89,8 +89,13 @@ This provides a function for each supported HTML element.
 These functions can be passed an optional object describing HTML attributes
 and the element content.
 
-For example, the following code generates
-the HTML string "<p class="greet" id="p1">Hello, World!</p>".
+For example, suppose we want to generate the following HTML string.
+
+```html
+<p class="greet" id="p1" \>Hello, World!\</p>
+```
+
+The `p` function can be used as follows to do this.
 
 ```js
 const html = p({id: 'p1', class: 'greet'}, 'Hello, World!');
