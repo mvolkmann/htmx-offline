@@ -88,8 +88,12 @@ that relies on the browser JavaScript run-time and not Bun.
 
 This application uses a custom library for HTML generation
 that is very small (3 KB) and quite easy to use.
-See [public/js2html.js](/public/js2html.js) and its
-associated unit tests in [public/js2html.test.js](/public/js2html.test.js).
+See [https://www.npmjs.com/package/js2htmlstr](js2htmlstr)
+I copied the file `node_modules/js2htmlstr/src/js2htmlstr.js`
+to the `public` directory so I could use it in a service worker.
+I also copied the types from `node_modules/js2htmlstr/src/types.d.ts`
+into `public/types.d.ts`.
+
 This provides a function for each supported HTML element.
 These functions can be passed an optional object describing HTML attributes
 and the element content.

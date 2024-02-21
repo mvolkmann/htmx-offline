@@ -3,19 +3,19 @@
  * generate strings of HTML from JavaScript.
  */
 
-/** @typedef {import('./types.d.ts').ContentFn} ContentFn } */
-/** @typedef {import('./types.d.ts').SelfClosingFn} SelfClosingFn } */
-/** @typedef {Object.<string, boolean | number | string>} Attributes */
-/** @typedef {string[] | number | string} Children */
+/** @typedef {import('./types.js').Attributes} Attributes } */
+/** @typedef {import('./types.js').Child} Child } */
+/** @typedef {import('./types.js').ContentFn} ContentFn } */
+/** @typedef {import('./types.js').SelfClosingFn} SelfClosingFn } */
 
 /**
  * Generates an HTML string for an element with a close tag.
  * @param {string} name
- * @param {Attributes | Children} [attrs]
- * @param {Children} [children]
+ * @param {Attributes | Child[]} [attrs]
+ * @param {Child[]} children
  * @returns string - the HTML
  */
-export function el(name, attrs, children) {
+export function el(name, attrs, ...children) {
   // Begin the opening tag.
   /** @type {string} */
   let html = '<' + name;
@@ -26,21 +26,17 @@ export function el(name, attrs, children) {
       html += ` ${key}="${attrs[key]}"`;
     }
   } else {
-    // Assume the second argument describes the children, not attributes.
-    children = attrs;
+    // Assume attrs holds the first child.
+    const child = /** @type {Child} */ (/** @type {unknown} */ (attrs));
+    children.unshift(child);
   }
 
   // Close the opening tag.
   html += '>';
 
-  if (Array.isArray(children)) {
-    // Add child elements.
-    for (const child of children) {
-      html += child;
-    }
-  } else {
-    // Add text content.
-    html += children;
+  // Add child elements.
+  for (const child of children) {
+    html += child;
   }
 
   // Add the closing tag.
@@ -106,7 +102,7 @@ const elements = {};
 
 for (const name of contentElements) {
   elements[name] = /** @type {ContentFn} */ (
-    (attrs, children) => el(name, attrs, children)
+    (attrs, ...children) => el(name, attrs, ...children)
   );
 }
 

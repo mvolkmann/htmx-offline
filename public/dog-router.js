@@ -1,10 +1,9 @@
 // This file defines the API routes that the service worker will handle.
 // These are not implemented by a real HTTP server.
 
-import IDBEasy from './idb-easy.js';
-//import {button, div, form, input, label, td, tr} from './js2html.js';
-import elements from './js2html.js';
+import elements from './js2htmlstr.js';
 const {button, div, form, input, label, td, tr} = elements;
+import IDBEasy from './idb-easy.js';
 import {Router} from './tiny-request-router.mjs';
 
 /** @typedef {import('./types.d.ts').Dog} Dog } */
@@ -40,10 +39,12 @@ function dogToTableRow(dog, updating = false) {
   };
   if (updating) attrs['hx-swap-oob'] = 'true';
 
-  return tr(attrs, [
+  return tr(
+    attrs,
     td(name),
     td(breed),
-    td({class: 'buttons'}, [
+    td(
+      {class: 'buttons'},
       button(
         {
           class: 'show-on-hover',
@@ -66,8 +67,8 @@ function dogToTableRow(dog, updating = false) {
         },
         '✎'
       )
-    ])
-  ]);
+    )
+  );
 }
 
 /**
@@ -215,8 +216,9 @@ router.get('/form', async () => {
     );
   }
 
-  const html = form({'hx-disabled-elt': '#submit-btn', ...attrs}, [
-    div([
+  const html = form(
+    {'hx-disabled-elt': '#submit-btn', ...attrs},
+    div(
       label({for: 'name'}, 'Name'),
       input({
         id: 'name',
@@ -226,8 +228,8 @@ router.get('/form', async () => {
         type: 'text',
         value: selectedDog?.name ?? ''
       })
-    ]),
-    div([
+    ),
+    div(
       label({for: 'breed'}, 'Breed'),
       input({
         id: 'breed',
@@ -237,9 +239,9 @@ router.get('/form', async () => {
         type: 'text',
         value: selectedDog?.breed ?? ''
       })
-    ]),
-    div({class: 'buttons'}, buttons)
-  ]);
+    ),
+    div({class: 'buttons'}, ...buttons)
+  );
 
   return new Response(html, {
     headers: {'Content-Type': 'application/html'}
